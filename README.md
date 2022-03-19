@@ -1,6 +1,8 @@
 ## 说明
 
-使用PyQt5编写
+使用PyQt5编写，生成exe，请运行pyinstaller -F 程序.py
+
+需要pip install pyinstaller
 
 ## 老王简繁转换器
 
@@ -12,7 +14,7 @@
 
 选取姓名按钮快捷键：空格，缺席按钮快捷键：B。
 
-运行python脚本，需要 pip install pyqt5 pyqt5-tools pyinstaller pandas openpyxl
+需要 pip install pyqt5 pyqt5-tools pandas openpyxl
 
 **1.1版更新：**
 支持xls,xlsx
