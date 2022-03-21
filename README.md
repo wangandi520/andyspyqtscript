@@ -4,6 +4,8 @@
 
 需要pip install pyinstaller
 
+部分脚本命令行版[https://github.com/wangandi520/andyspythonscript](https://github.com/wangandi520/andyspythonscript)
+
 ## 老王简繁转换器
 
 支持拖拽文件到程序中，可同一个文件多次改名
