@@ -8,9 +8,13 @@
 
 ## 各种class用法
 
-from 文件名 import class名，例如from class拖拽文件加入列表 import andysFileListWidget
+from 文件名 import class名，例如from classandysFileListWidget import andysFileListWidget
 
 预览class效果，打开py文件把if __name__ 行下面的注释取消
+
+### classandysFileListWidget.py
+
+实现打开或拖拽文件加入到列表。拖拽文件夹会把里面的所有文件加入到列表。按钮可删除和清空。
 
 ## 老王简繁转换器
 
