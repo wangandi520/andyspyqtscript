@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLa
 from PyQt5.QtCore import QSize, QUrl
 from pypinyin import pinyin, lazy_pinyin, Style
 from pathlib import Path
+from classandysFileListWidget import andysFileListWidget
 
 # pip install pyqt5 pyqt5-tools pypinyin opencc-python-reimplemented
 
@@ -15,13 +16,19 @@ class MyQWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle('老王简繁转换器v1.0')
+        
+        self.fileListWidget = andysFileListWidget()
+        
         inputLayout = QHBoxLayout()
+        leftLayout = QHBoxLayout()
+        rightLayout = QVBoxLayout()
         outputTLayout = QHBoxLayout()
         outputSLayout = QHBoxLayout()
         outputLetterLayout = QHBoxLayout()
         outputFirstLetterLayout = QHBoxLayout()
         helpLayout = QHBoxLayout()
-        mainLayout = QVBoxLayout()
+        mainLayout = QHBoxLayout()
+        
         self.inputButton = QPushButton('输入')
         self.outputTButton = QPushButton('繁体')
         self.outputSButton = QPushButton('简体')
@@ -37,12 +44,13 @@ class MyQWidget(QWidget):
         self.outputSLineEdit = QLineEdit()
         self.outputLetterLineEdit = QLineEdit()
         self.outputFirstLetterLineEdit = QLineEdit()
-        self.setMinimumSize(400, 180)
+        self.setMinimumSize(500, 200)
         
         self.currentFilePath = ''
         self.setAcceptDrops(True)
 
         # 事件
+        self.fileListWidget.getFilePathSignal.connect(self.doGetFilePathSlot)
         self.setFunctionCopyButton.toggled.connect(lambda isChecked: print(isChecked))
         self.setFunctionRenameButton.toggled.connect(lambda isChecked: print(isChecked))
         self.inputLineEdit.textChanged.connect(self.convertText)
@@ -67,31 +75,33 @@ class MyQWidget(QWidget):
         helpLayout.addWidget(self.setFunctionCopyButton)
         helpLayout.addWidget(self.setFunctionRenameButton)
         helpLayout.addWidget(helpLabel)
-        mainLayout.addLayout(inputLayout)
-        mainLayout.addLayout(outputTLayout)
-        mainLayout.addLayout(outputSLayout)
-        mainLayout.addLayout(outputLetterLayout)
-        mainLayout.addLayout(outputFirstLetterLayout)
-        mainLayout.addLayout(helpLayout)
+        
+        
+        leftLayout.addWidget(self.fileListWidget)
+        rightLayout.addLayout(inputLayout)
+        rightLayout.addLayout(outputTLayout)
+        rightLayout.addLayout(outputSLayout)
+        rightLayout.addLayout(outputLetterLayout)
+        rightLayout.addLayout(outputFirstLetterLayout)
+        rightLayout.addLayout(helpLayout)
+        
+        mainLayout.addLayout(leftLayout)
+        mainLayout.addLayout(rightLayout)
         self.setLayout(mainLayout)
+       
+
+    def doGetFilePathSlot(self, getMessage):
+        self.setWindowTitle('老王简繁转换器v1.0 当前文件：' + getMessage)
+        #print(getMessage)
+        self.currentFilePath = Path(getMessage)
+        self.inputLineEdit.setText(Path(getMessage).stem)
         
-        
-    def dragEnterEvent(self, event):
-        event.acceptProposedAction()
-    
-    
-    def dropEvent(self, event):
-        self.inputLineEdit.setText(Path(event.mimeData().text()).stem)
-        getDropFilePath = event.mimeData().urls()[0].toString()
-        if (getDropFilePath[0:8] == 'file:///'):
-            self.currentFilePath = Path(getDropFilePath[8:])
 
     def convertText(self):
         self.outputTLineEdit.setText(OpenCC('s2t').convert(self.inputLineEdit.text()))
         self.outputSLineEdit.setText(OpenCC('t2s').convert(self.inputLineEdit.text()))
         self.outputLetterLineEdit.setText(''.join(lazy_pinyin(self.inputLineEdit.text())))
         self.outputFirstLetterLineEdit.setText(''.join(lazy_pinyin(self.inputLineEdit.text(), style=Style.FIRST_LETTER)))
-        self.resize(100 + len(self.inputLineEdit.text()) * 15, 180)
             
             
     def doInputText(self):
