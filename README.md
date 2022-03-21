@@ -6,6 +6,12 @@
 
 部分脚本命令行版[https://github.com/wangandi520/andyspythonscript](https://github.com/wangandi520/andyspythonscript)
 
+## 各种class用法
+
+from 文件名 import class名，例如from class拖拽文件加入列表 import andysFileListWidget
+
+预览class效果，打开py文件把if __name__ 行下面的注释取消
+
 ## 老王简繁转换器
 
 支持拖拽文件到程序中，可同一个文件多次改名
