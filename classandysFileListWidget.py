@@ -4,16 +4,11 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QListWidget, QPushButton, QFileDialog
-from PyQt5.QtCore import QObject, pyqtSignal
 from pathlib import Path
 
 # pip install pyqt5
 
 class andysFileListWidget(QWidget):
-    
-    #列表选中变化时发射信号
-    getFilePathSignal = pyqtSignal(str)
-    
     def __init__(self, parent=None):
         # 拖拽文件加入列表。如果拖拽文件夹，里面的所有文件都加入。不重复加入
         super().__init__(parent)
@@ -21,12 +16,11 @@ class andysFileListWidget(QWidget):
         self.setAcceptDrops(True)
         self.allFileListArray = []
         self.fileListWidget = QListWidget()
-        self.currentFilePath = ''
         openFileButton = QPushButton('添加')
         deleteFileButton = QPushButton('删除')
         clearListButton = QPushButton('清空')
 
-        self.fileListWidget.currentRowChanged.connect(self.doCurrentRowChanged)
+        #self.fileListWidget.currentRowChanged.connect(self.doCurrentRowChanged)
         openFileButton.clicked.connect(self.doOpenFileButton)
         deleteFileButton.clicked.connect(self.doDeleteFileButton)
         clearListButton.clicked.connect(self.doClearListButton)
@@ -41,7 +35,7 @@ class andysFileListWidget(QWidget):
         mainLayout.addLayout(topLayout)
         mainLayout.addLayout(bottomLayout)
         self.setLayout(mainLayout)
-        
+
 
     def dragEnterEvent(self, event):
         event.accept()
@@ -67,13 +61,13 @@ class andysFileListWidget(QWidget):
 
 
     def getCurrentRowFilePath(self):
-        if (len(self.fileListWidget) > 0):
-            return self  
-            
-           
-    def doCurrentRowChanged(self):
-        if (len(self.fileListWidget) > 0):
-            self.getFilePathSignal.emit(str(self.allFileListArray[self.fileListWidget.currentRow()]))
+        return self.allFileListArray[self.fileListWidget.currentRow()]
+       
+
+    # def doCurrentRowChanged(self):
+        # # print(self.fileListWidget.currentRow())
+        # # print(self.getCurrentRowFilePath())
+        # print(self.getCurrentRowFilePath())
         
         
     def doOpenFileButton(self):
@@ -99,7 +93,6 @@ class andysFileListWidget(QWidget):
     def doClearListButton(self):
         self.fileListWidget.clear()
         self.allFileListArray = []
-        self.currentFilePath = ''
         # print(self.fileListWidget.currentRow())
         # print(self.allFileListArray)
     
