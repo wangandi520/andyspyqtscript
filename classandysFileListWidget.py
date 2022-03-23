@@ -44,9 +44,6 @@ class andysFileListWidget(QWidget):
         mainLayout.addLayout(bottomLayout)
         self.setLayout(mainLayout)
         
-    def fileListChangedSlot(self, value):
-        print(value)
-        
     def dragEnterEvent(self, event):
         event.accept()
 
@@ -64,8 +61,6 @@ class andysFileListWidget(QWidget):
                             self.allFileListArray.append(file)
                             self.fileListWidget.addItem(file.name)
                             self.fileListChangedSignal.emit()
-        print(len(self.fileListWidget))
-        print(len(self.allFileListArray))
 
     def dragMoveEvent(self, event):
         event.accept()
@@ -79,40 +74,34 @@ class andysFileListWidget(QWidget):
             self.fileListWidget.addItem(eachFile.name)
             
     def getCurrentRowFilePath(self):
-        print('getCurrentRowFilePath')
         if len(self.allFileListArray) > 0:
-            return self.allFileListArray[self.fileListWidget.currentRow()]
+            return self.allFileListArray[self.fileListWidget.currentRow()]     
+            
+    def getAllFileListArray(self):
+        return self.allFileListArray
+        
+    def setCurrentRowFilePath(self, newPath):
+        if len(self.allFileListArray) > 0:
+            self.allFileListArray[self.fileListWidget.currentRow()] = newPath
             
     def getLastRowFilePath(self):
-        print('getCurrentRowFilePath')
         if len(self.allFileListArray) > 0:
             return self.allFileListArray[-1]
         
     def getThisRowFilePath(self, rowNumber):
         # index start = 0
-        print('getThisRowFilePath')
         if (rowNumber < len(self.allFileListArray) and len(self.allFileListArray) > 0):
             return self.allFileListArray[rowNumber]
         else:
             return ''
 
     def getCurrentRow(self):
-        print('getCurrentRow')
         return self.fileListWidget.currentRow()
 
-    def getAllFileListArray(self):
-        print('getCurrentRowFilePath')
-        return self.allFileListArray
-
     def doCurrentRowChanged(self):
-        #print(len(self.fileListWidget))
-        #print(len(self.allFileListArray))
-        #print(self.allFileListArray[self.fileListWidget.currentRow()])
-        #print(self.fileListWidget[)
         self.currentRowChangedSignal.emit()
 
     def doOpenFileButton(self):
-        print('doOpenFileButton')
         # 打开文件。如果是文件夹请拖拽。
         tempFileName = QFileDialog.getOpenFileNames(self, "打开文件", ".", "*.*")[0]
         for eachFilePath in tempFileName:
@@ -127,24 +116,15 @@ class andysFileListWidget(QWidget):
                             self.allFileListArray.append(eacheachFilePath)
                             self.fileListWidget.addItem(eacheachFilePath.name)
                             self.fileListChangedSignal.emit()
-        print(len(self.fileListWidget))
-        print(len(self.allFileListArray))
         
     def doDeleteFileButton(self):
-        print('doDeleteFileButton')
-        print(self.getThisRowFilePath(1))
         if (self.fileListWidget.currentRow() > -1):
             self.fileListWidget.takeItem(self.fileListWidget.row(self.fileListWidget.currentItem()))
             self.allFileListArray.remove(self.allFileListArray[self.fileListWidget.currentRow()])
-        print(len(self.fileListWidget))
-        print(len(self.allFileListArray))
 
     def doClearListButton(self):
-        print('doClearListButton')
         self.fileListWidget.clear()
         self.allFileListArray = []
-        # print(self.fileListWidget.currentRow())
-        # print(self.allFileListArray)
 
 
 if __name__ == '__main__':
