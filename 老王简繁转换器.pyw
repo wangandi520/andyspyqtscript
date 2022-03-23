@@ -85,7 +85,8 @@ class MyQWidget(QWidget):
         self.convertText()
         
     def convertText(self):
-        self.inputLineEdit.setText(str(self.fileListWidget.getCurrentRowFilePath().stem))
+        if self.fileListWidget.getCurrentRowFilePath():
+            self.inputLineEdit.setText(str(self.fileListWidget.getCurrentRowFilePath().stem))
         self.outputTLineEdit.setText(OpenCC('s2t').convert(self.inputLineEdit.text()))
         self.outputSLineEdit.setText(OpenCC('t2s').convert(self.inputLineEdit.text()))
         self.outputLetterLineEdit.setText(''.join(lazy_pinyin(self.inputLineEdit.text())))
