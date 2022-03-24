@@ -16,6 +16,16 @@ from 文件名 import class名，例如from classandysFileListWidget import andy
 
 实现打开或拖拽文件加入到列表。拖拽文件夹会把里面的所有文件加入到列表。按钮可删除和清空。
 
+## 老王SHA1生成校验器
+
+可拖拽
+
+生成文件信息，html，markdown或sha格式
+
+单独拖拽sha文件或校验
+
+单独拖拽文件夹或把生成的文件放到这个文件夹里，其他时候放到py同路径
+
 ## 老王简繁转换器
 
 支持拖拽文件到程序中，可同一个文件多次改名
