@@ -222,8 +222,10 @@ class MyQWidget(QWidget):
         return sha1Obj.hexdigest()
 
     def writeFile(self, suffix, filereadlines):
-        print(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix)
-        newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix, mode='w', encoding='UTF-8')
+        if self.fileListWidget.getFirstDrop():
+            newfile = open(str(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(self.fileListWidget.getAllFileListArray()[0].parent.name)) + '.' + suffix, mode='w', encoding='UTF-8')
+        else:
+            newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix, mode='w', encoding='UTF-8')
         newfile.writelines(filereadlines)
         newfile.close()  
 

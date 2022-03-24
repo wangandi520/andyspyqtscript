@@ -24,6 +24,7 @@ class andysFileListWidget(QWidget):
         self.setAcceptDrops(True)
         self.allFileListArray = []
         self.fileListWidget = QListWidget()
+        self.ifFirstDrop = False
         openFileButton = QPushButton('添加')
         deleteFileButton = QPushButton('删除')
         clearListButton = QPushButton('清空')
@@ -55,16 +56,21 @@ class andysFileListWidget(QWidget):
             filePath = eachFile.toString()
             if (filePath[0:8] == 'file:///' and Path(filePath[8:]) not in self.allFileListArray):
                 if Path.is_file(Path(filePath[8:])):
+                    self.ifFirstDrop = False
                     self.allFileListArray.append(Path(filePath[8:]))
                     self.fileListWidget.addItem(Path(filePath[8:]).name)
                     self.fileListChangedSignal.emit()
                 if Path.is_dir(Path(filePath[8:])):
+                    if(self.ifFirstDrop == False and len(self.allFileListArray) == 0):
+                        self.ifFirstDrop = True
+                    else:
+                        self.ifFirstDrop = False
                     for file in Path(filePath[8:]).glob('**/*'):
                         if Path.is_file(file):
                             self.allFileListArray.append(file)
                             self.fileListWidget.addItem(file.name)
                             self.fileListChangedSignal.emit()
-
+        
     def dragMoveEvent(self, event):
         event.accept()
 
@@ -78,6 +84,9 @@ class andysFileListWidget(QWidget):
             
     # def getMode(self):
         # return self.mode
+        
+    def getFirstDrop(self):
+        return self.ifFirstDrop
         
     def getCurrentRowFilePath(self):
         if len(self.allFileListArray) > 0:
