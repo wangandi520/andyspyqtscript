@@ -26,6 +26,7 @@ class MyQWidget(QWidget):
         
         leftLayout = QHBoxLayout()
         rightLayout = QVBoxLayout()
+        rightTopLayout = QHBoxLayout()
         outputTLayout = QHBoxLayout()
         outputSLayout = QHBoxLayout()
         outputLetterLayout = QHBoxLayout()
@@ -33,9 +34,9 @@ class MyQWidget(QWidget):
         mainLayout = QHBoxLayout()
         
         
-        # self.oldNameButton = QPushButton('原名')
-        # self.outputTButton = QPushButton('繁体')
-        # self.outputSButton = QPushButton('简体')
+        self.toHtmlButton = QPushButton('输出Html')
+        self.toMarkdownButton = QPushButton('输出Markdown')
+        self.toSha1Button = QPushButton('输出Sha1')
         # self.outputLetterButton = QPushButton('字母')
         # self.outputFirstLetterButton = QPushButton('首字母')
         
@@ -53,7 +54,9 @@ class MyQWidget(QWidget):
         #self.fileListWidget.currentRowChangedSignal.connect(self.currentRowChangedSlot)
         # self.inputLineEdit.textChanged.connect(self.convertText)
         # self.oldNameButton.clicked.connect(self.doOldNameText)
-        # self.outputTButton.clicked.connect(self.doOutputTText)
+        self.toHtmlButton.clicked.connect(self.toHtmlSlot)
+        self.toMarkdownButton.clicked.connect(self.toMarkdownSlot)
+        self.toSha1Button.clicked.connect(self.toSha1Slot)
         # self.outputSButton.clicked.connect(self.doOutputSText)
         # self.outputLetterButton.clicked.connect(self.doOutputLetterText)
         # self.outputFirstLetterButton.clicked.connect(self.doOutputFirstLetterText)
@@ -61,6 +64,10 @@ class MyQWidget(QWidget):
         # Layout设置
    
         leftLayout.addWidget(self.fileListWidget)
+        rightTopLayout.addWidget(self.toHtmlButton)
+        rightTopLayout.addWidget(self.toMarkdownButton)
+        rightTopLayout.addWidget(self.toSha1Button)
+        rightLayout.addLayout(rightTopLayout)
         rightLayout.addWidget(self.fileInfoWidget)
         mainLayout.addLayout(leftLayout)
         mainLayout.addLayout(rightLayout)
@@ -68,10 +75,44 @@ class MyQWidget(QWidget):
         mainLayout.setStretchFactor(rightLayout, 4)
         self.setLayout(mainLayout)    
             
+    def toHtmlSlot(self):
+        # 转换成html格式
+        returnFileInfo = []
+        returnFileInfo.append('<html><head><title>文件信息</title><style>table{width:auto;}table,td{border:1px solid #000000;table-layout:fixed;border-collapse:collapse;}table td:first-child{width:auto;}table td{min-width:100px;}a{text-decoration: none;}table tr:first-child{background-color:#eee;}tr:hover{background-color:#eee;}</style></head><body><table id="allFileTable"><tr><td>文件夹名</td><td>文件类型</td><td>文件大小</td><td>修改时间</td><td>压缩包内文件数量</td><td>压缩包内文件夹数量</td><td>扩展名对应的文件数量</td><td>SHA1校验码</td></tr>')
+        
+        for eachInfo in self.allFileInfoArray:
+            newContent = '<tr>'
+            for eachString in eachInfo:
+                newContent = newContent + '<td>' + str(eachString) + '</td>'
+            returnFileInfo.append(newContent + '</tr>')
+        returnFileInfo.append('</table></body></html>')
+        self.writeFile('html', returnFileInfo)
+    
+    def toMarkdownSlot(self):
+        # 转换成markdown格式
+        returnFileInfo = []
+        returnFileInfo.append('|文件夹名|文件类型|文件大小|修改时间|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码|\n')
+        returnFileInfo.append('| --- | --- | --- | --- | --- | --- | --- | --- |\n')
+        
+        for eachInfo in self.allFileInfoArray:
+            newContent = '|'
+            for eachString in eachInfo:
+                newContent = newContent + str(eachString) + '|'
+            returnFileInfo.append(newContent + '\n')
+        self.writeFile('md', returnFileInfo)
+    
+    def toSha1Slot(self):
+        returnFileInfo = []
+        for eachInfo in self.allFileInfoArray:
+            newContent = ''
+            newContent = newContent + eachInfo[0] + ' ' + eachInfo[7] + '\n'
+            returnFileInfo.append(eachInfo[7] + ' *' + eachInfo[0] + '\n')
+        self.writeFile('sha1', returnFileInfo)
+    
+    
     def fileListChangedSlot(self):
         fileListCount = len(self.fileListWidget.getAllFileListArray())
         if (fileListCount == 1 and Path(self.fileListWidget.getAllFileListArray()[0]).suffix == '.sha'):
-            print('issha')
             self.fileInfoWidget.setColumnCount(3)
             self.fileInfoWidget.setHorizontalHeaderLabels(['校验是否成功','文件名','SHA1校验码'])
             self.fileInfoWidget.resizeColumnsToContents()
@@ -143,7 +184,6 @@ class MyQWidget(QWidget):
                 eachFileInfoArray.append(tempFileType[:-2])
                 eachFileInfoArray.append(tmpSha1)
                 self.allFileInfoArray.append(eachFileInfoArray)
-                print(self.allFileInfoArray)
                 #eachFileInfo.append(str(filePath.relative_to(directoryPath)))
                 #print(str(eachFilePath.relative_to(eachFilePath)))
                 #eachFileInfo.append(filePath.suffix[1:])
@@ -207,14 +247,9 @@ class MyQWidget(QWidget):
         return sha1Obj.hexdigest()
 
 
-    def writeFile(self, aPath, filereadlines):
-        # 写入md文件
-        # 放在文件夹外面
-        #newfile = open(aPath.parent.joinpath(aPath.name + '.md'), mode='w', encoding='UTF-8')
-        # 放在文件夹里面，html格式
-        newfile = open(aPath, mode='w', encoding='UTF-8')
-        # markdown格式
-        newfile = open(aPath, mode='w', encoding='UTF-8')
+    def writeFile(self, suffix, filereadlines):
+        print(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix)
+        newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix, mode='w', encoding='UTF-8')
         newfile.writelines(filereadlines)
         newfile.close()  
 
@@ -234,34 +269,7 @@ class MyQWidget(QWidget):
             return filereadlines 
         except FileNotFoundError:
             print(str(filePath) + '文件不存在')
-        
-    def arrayToHTML(self, myArray):
-        # 转换成html格式
-        returnFileInfo = []
-        returnFileInfo.append('<html><head><title>文件信息</title><style>table{width:auto;}table,td{border:1px solid #000000;table-layout:fixed;border-collapse:collapse;}table td:first-child{width:auto;}table td{min-width:100px;}a{text-decoration: none;}table tr:first-child{background-color:#eee;}tr:hover{background-color:#eee;}</style></head><body><table id="allFileTable"><tr><td>文件夹名</td><td>文件类型</td><td>文件大小</td><td>修改时间</td><td>压缩包内文件数量</td><td>压缩包内文件夹数量</td><td>扩展名对应的文件数量</td><td>SHA1校验码</td></tr>')
-        
-        for eachInfo in myArray:
-            newContent = '<tr>'
-            for eachString in eachInfo:
-                newContent = newContent + '<td>' + str(eachString) + '</td>'
-            returnFileInfo.append(newContent + '</tr>')
-        returnFileInfo.append('</table></body></html>')
-        return returnFileInfo
-        
-        
-    def arrayToMarkdown(self, myArray):
-        # 转换成markdown格式
-        returnFileInfo = []
-        returnFileInfo.append('|文件夹名|文件类型|文件大小|修改时间|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码|\n')
-        returnFileInfo.append('| --- | --- | --- | --- | --- | --- | --- |\n')
-        
-        for eachInfo in myArray:
-            newContent = '|'
-            for eachString in eachInfo:
-                newContent = newContent + str(eachString) + '|'
-            returnFileInfo.append(newContent + '\n')
-        return returnFileInfo
-        
+      
     def getFileInfo(self, directoryPath, filePath):
         # Path(filePath)
         eachFileInfo = []
