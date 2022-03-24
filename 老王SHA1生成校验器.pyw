@@ -6,7 +6,7 @@ import zipfile
 import rarfile
 import datetime
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox
 from PyQt5.QtCore import QSize, QUrl
 from pathlib import Path
 from hashlib import sha1
@@ -100,24 +100,28 @@ class MyQWidget(QWidget):
             self.fileInfoWidget.setColumnCount(3)
             self.fileInfoWidget.setHorizontalHeaderLabels(['校验是否成功','文件名','SHA1校验码'])
             getShaFileContent = self.readFile(self.fileListWidget.getAllFileListArray()[0])
+            workingMessageBox = QMessageBox()
+            workingMessageBox.setText('正在计算sha1值，请稍等。')
+            workingMessageBox.show()
             for eachFileSha1 in getShaFileContent:
                 tempSha1 = eachFileSha1.split(' *')[0]
                 tempFileName = eachFileSha1.split(' *')[1]
+                if not Path.exists(Path(tempFileName)):
+                    tempFileName = str(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(tempFileName))
                 if (self.getSha1(tempFileName) == tempSha1):
-                    print('校验成功 ' + tempFileName)
-                    print(self.fileInfoWidget.rowCount())
                     rowCount = self.fileInfoWidget.rowCount()
                     self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
                     self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('校验成功'))
                     self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
                     self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
                 else:
-                    print('!校验失败 ' + tempFileName)
                     rowCount = self.fileInfoWidget.rowCount()
                     self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
                     self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
                     self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
                     self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+            
+            workingMessageBox.close()
             self.fileInfoWidget.resizeColumnsToContents()
         else:
             self.fileInfoWidget.setColumnCount(8)
@@ -232,6 +236,17 @@ class MyQWidget(QWidget):
         # 读取文件
         try:
             with open(filePath, mode='r', encoding='UTF-8') as file:
+                filereadlines = file.readlines()
+            for i in filereadlines:
+            # 去掉空行
+                if i == '\n':
+                    filereadlines.remove(i)
+            # remove '\n' in line end
+            for i in range(len(filereadlines)):
+                filereadlines[i] = filereadlines[i].rstrip()
+            return filereadlines 
+        except UnicodeDecodeError:
+            with open(filePath, mode='r', encoding='ANSI') as file:
                 filereadlines = file.readlines()
             for i in filereadlines:
             # 去掉空行
