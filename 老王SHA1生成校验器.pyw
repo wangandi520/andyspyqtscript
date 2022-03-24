@@ -6,15 +6,13 @@ import zipfile
 import rarfile
 import datetime
 
-from opencc import OpenCC
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton, QRadioButton, QTableWidget, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import QSize, QUrl
-from pypinyin import pinyin, lazy_pinyin, Style
 from pathlib import Path
 from hashlib import sha1
 from classandysFileListWidget import andysFileListWidget
 
-# pip install pyqt5 pyqt5-tools pypinyin opencc-python-reimplemented
+# pip install pyqt5 pyqt5-tools rarfile
 
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
@@ -33,36 +31,19 @@ class MyQWidget(QWidget):
         outputFirstLetterLayout = QHBoxLayout()
         mainLayout = QHBoxLayout()
         
-        
         self.toHtmlButton = QPushButton('输出Html')
         self.toMarkdownButton = QPushButton('输出Markdown')
         self.toSha1Button = QPushButton('输出Sha1')
-        # self.outputLetterButton = QPushButton('字母')
-        # self.outputFirstLetterButton = QPushButton('首字母')
-        
-        # self.inputLineEdit = QLineEdit()
-        # self.outputTLineEdit = QLineEdit()
-        # self.outputSLineEdit = QLineEdit()
-        # self.outputLetterLineEdit = QLineEdit()
-        # self.outputFirstLetterLineEdit = QLineEdit()
         self.setMinimumSize(1400, 600)
-        #self.setMinimumWidth(1100)
         self.setAcceptDrops(True)
 
         # 事件
         self.fileListWidget.fileListChangedSignal.connect(self.fileListChangedSlot)
-        #self.fileListWidget.currentRowChangedSignal.connect(self.currentRowChangedSlot)
-        # self.inputLineEdit.textChanged.connect(self.convertText)
-        # self.oldNameButton.clicked.connect(self.doOldNameText)
         self.toHtmlButton.clicked.connect(self.toHtmlSlot)
         self.toMarkdownButton.clicked.connect(self.toMarkdownSlot)
         self.toSha1Button.clicked.connect(self.toSha1Slot)
-        # self.outputSButton.clicked.connect(self.doOutputSText)
-        # self.outputLetterButton.clicked.connect(self.doOutputLetterText)
-        # self.outputFirstLetterButton.clicked.connect(self.doOutputFirstLetterText)
         
         # Layout设置
-   
         leftLayout.addWidget(self.fileListWidget)
         rightTopLayout.addWidget(self.toHtmlButton)
         rightTopLayout.addWidget(self.toMarkdownButton)
@@ -107,20 +88,37 @@ class MyQWidget(QWidget):
             newContent = ''
             newContent = newContent + eachInfo[0] + ' ' + eachInfo[7] + '\n'
             returnFileInfo.append(eachInfo[7] + ' *' + eachInfo[0] + '\n')
-        self.writeFile('sha1', returnFileInfo)
-    
-    
+        self.writeFile('sha', returnFileInfo)
+ 
     def fileListChangedSlot(self):
-        fileListCount = len(self.fileListWidget.getAllFileListArray())
-        if (fileListCount == 1 and Path(self.fileListWidget.getAllFileListArray()[0]).suffix == '.sha'):
-            self.fileInfoWidget.setColumnCount(3)
-            self.fileInfoWidget.setHorizontalHeaderLabels(['校验是否成功','文件名','SHA1校验码'])
-            self.fileInfoWidget.resizeColumnsToContents()
-        elif (fileListCount == 0):
+        if (len(self.fileListWidget.getAllFileListArray()) == 0):
             self.fileInfoWidget.clear()
             self.fileInfoWidget.setColumnCount(0)
             self.fileInfoWidget.setRowCount(0)
             self.allFileInfoArray.clear()
+        elif (len(self.fileListWidget.getAllFileListArray()) == 1 and self.fileListWidget.getAllFileListArray()[0].suffix == '.sha'):
+            self.fileInfoWidget.setColumnCount(3)
+            self.fileInfoWidget.setHorizontalHeaderLabels(['校验是否成功','文件名','SHA1校验码'])
+            getShaFileContent = self.readFile(self.fileListWidget.getAllFileListArray()[0])
+            for eachFileSha1 in getShaFileContent:
+                tempSha1 = eachFileSha1.split(' *')[0]
+                tempFileName = eachFileSha1.split(' *')[1]
+                if (self.getSha1(tempFileName) == tempSha1):
+                    print('校验成功 ' + tempFileName)
+                    print(self.fileInfoWidget.rowCount())
+                    rowCount = self.fileInfoWidget.rowCount()
+                    self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
+                    self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('校验成功'))
+                    self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
+                    self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+                else:
+                    print('!校验失败 ' + tempFileName)
+                    rowCount = self.fileInfoWidget.rowCount()
+                    self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
+                    self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
+                    self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
+                    self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+            self.fileInfoWidget.resizeColumnsToContents()
         else:
             self.fileInfoWidget.setColumnCount(8)
             self.fileInfoWidget.setHorizontalHeaderLabels(['文件名','文件类型','文件大小','修改时间','压缩包内文件数量','压缩包内文件夹数量','扩展名对应的文件数量','SHA1校验码'])
@@ -184,30 +182,8 @@ class MyQWidget(QWidget):
                 eachFileInfoArray.append(tempFileType[:-2])
                 eachFileInfoArray.append(tmpSha1)
                 self.allFileInfoArray.append(eachFileInfoArray)
-                #eachFileInfo.append(str(filePath.relative_to(directoryPath)))
-                #print(str(eachFilePath.relative_to(eachFilePath)))
-                #eachFileInfo.append(filePath.suffix[1:])
-                #eachFileInfo.append(formatFileSize(filePath.stat().st_size))
-                #eachFileInfo.append(datetime.datetime.strptime(filePath.stat().st_mtime, "%Y-%m-%d %H:%M:%S.%f"))
-                # eachFileInfo.append(datetime.datetime.fromtimestamp(filePath.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S'))
-                
-                # eachFileInfo.append(fileCount)
-                # eachFileInfo.append(dirCount)
-                # tempFileType = ''
-                
-                # eachFileInfo.append(tempFileType[:-2])
-                # eachFileInfo.append(getSha1(filePath))
-                
-                # dirCount = 0
-                # fileCount = 0
-                # fileType = {}
-
-                # print(self.formatFileSize(eachFile.stat().st_size))
-                # print(type(self.formatFileSize(eachFile.stat().st_size)))
             
             self.fileInfoWidget.resizeColumnsToContents()
-            #self.fileInfoWidget.insertRow(0, 0, QTableWidgetItem(self.fileListWidget.getAllFileListArray()[i].name))
-            # print(self.fileInfoWidget.item(0,0).text())
         
     def formatFileSize(self, sizeBytes):
     # 格式化文件大小
@@ -246,13 +222,11 @@ class MyQWidget(QWidget):
             print(str(filePath) + '文件不存在')
         return sha1Obj.hexdigest()
 
-
     def writeFile(self, suffix, filereadlines):
         print(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix)
         newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix, mode='w', encoding='UTF-8')
         newfile.writelines(filereadlines)
         newfile.close()  
-
 
     def readFile(self, filePath):
         # 读取文件
@@ -269,121 +243,6 @@ class MyQWidget(QWidget):
             return filereadlines 
         except FileNotFoundError:
             print(str(filePath) + '文件不存在')
-      
-    def getFileInfo(self, directoryPath, filePath):
-        # Path(filePath)
-        eachFileInfo = []
-        dirCount = 0
-        fileCount = 0
-        fileType = {}
-        
-        if zipfile.is_zipfile(filePath):
-            zf = zipfile.ZipFile(filePath)
-            for eachFile in zf.infolist():
-                if eachFile.is_dir():
-                    dirCount = dirCount + 1
-                else:
-                    fileCount = fileCount + 1
-                    if (Path(eachFile.filename).suffix not in fileType):
-                        fileType[Path(eachFile.filename).suffix] = 1
-                    else:
-                        fileType[Path(eachFile.filename).suffix] = fileType[Path(eachFile.filename).suffix] + 1
-            zf.close()
-        if rarfile.is_rarfile(filePath):
-            rf = rarfile.RarFile(filePath)
-            for eachFile in rf.infolist():
-                if eachFile.is_dir():
-                    dirCount = dirCount + 1
-                else:
-                    fileCount = fileCount + 1
-                    if (Path(eachFile.filename).suffix not in fileType):
-                        fileType[Path(eachFile.filename).suffix] = 1
-                    else:
-                        fileType[Path(eachFile.filename).suffix] = fileType[Path(eachFile.filename).suffix] + 1
-            rf.close()
-            
-        #eachFileInfo.append(str(filePath.parent.joinpath(filePath.name)))
-        eachFileInfo.append(str(filePath.relative_to(directoryPath)))
-        eachFileInfo.append(filePath.suffix[1:])
-        eachFileInfo.append(formatFileSize(filePath.stat().st_size))
-        #eachFileInfo.append(datetime.datetime.strptime(filePath.stat().st_mtime, "%Y-%m-%d %H:%M:%S.%f"))
-        eachFileInfo.append(datetime.datetime.fromtimestamp(filePath.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S'))
-        
-        eachFileInfo.append(fileCount)
-        eachFileInfo.append(dirCount)
-        tempFileType = ''
-        for key in sorted(fileType):
-            tempFileType = tempFileType + key[1:] + '=' + str(fileType[key]) + ', '
-        eachFileInfo.append(tempFileType[:-2])
-        eachFileInfo.append(getSha1(filePath))
-        print(eachFileInfo)
-        return eachFileInfo
-        
-
-    def checkSha1(self, filePath):
-        # 当前文件夹名内有文件夹.sha1的话，就开始校验
-        fileName = ''
-        getFileContent = ''
-        if (Path(filePath)) == (Path.cwd()):
-            getFileContent = readFile(Path.cwd().name + '.sha')
-        else:
-            getFileContent = readFile(Path(filePath).joinpath(Path(filePath).name + '.sha'))
-        print()
-        for eachFile in getFileContent:
-            tempSha1 = eachFile.split(' *')[0]
-            tempFileName = eachFile.split(' *')[1]
-            if (getSha1(Path(filePath).joinpath(tempFileName)) == tempSha1):
-                print('校验成功 ' + tempFileName)
-            else:
-                print('!校验失败 ' + tempFileName)
-
-    def main(inputPath): 
-        del inputPath[0]
-        if (len(inputPath) == 0):
-            inputPath = [Path.cwd()]
-        # 所有信息
-        # 每个文件的信息：|文件夹名|文件类型|文件大小|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码
-        allFileInfo = []
-        allFileSha1 = []
-        #转换成html = True, markdown = False
-        fileType = True
-        for aPath in inputPath:
-            if Path.is_dir(Path(aPath)):
-                for file in Path(aPath).glob('**/*'): 
-                    if Path.is_file(Path(file)):
-                        tempFileInfo = getFileInfo(Path(aPath), file)
-                        allFileInfo.append(tempFileInfo)
-                        allFileSha1.append(tempFileInfo[7] + ' *' + tempFileInfo[0] + '\n')  
-                writeFile(Path(aPath).joinpath(Path(aPath).name + '.sha'), allFileSha1)
-                if fileType:
-                    writeFile(Path(aPath).joinpath(Path(aPath).name + '.html'), arrayFormatToHTML(allFileInfo))
-                else:
-                    writeFile(Path(aPath).joinpath(Path(aPath).name + '.md'), arrayFormatToMD(allFileInfo))
-                
-                sha1FileExisted = False
-                for fileName in allFileInfo:
-                    if (Path(aPath).name + '.sha' in fileName[0]) :
-                        sha1FileExisted = True
-                        break
-                if sha1FileExisted:
-                    checkSha1(aPath)
-          
-            
-            if Path.is_file(Path(aPath)) and Path(aPath).suffix == '.sha':
-                
-                getFileContent = readFile(Path(aPath))
-                
-                for eachFile in getFileContent:
-                    tempSha1 = eachFile.split(' *')[0]
-                    tempFileName = eachFile.split(' *')[1]
-                    if (getSha1(Path(aPath).parent.joinpath(tempFileName)) == tempSha1):
-                        print('校验成功 ' + tempFileName)
-                    else:
-                        print('!校验失败 ' + tempFileName)
-                        
-        print()
-        print('发布网址 https://github.com/wangandi520/andyspythonscript')
-        input('按回车退出')
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
