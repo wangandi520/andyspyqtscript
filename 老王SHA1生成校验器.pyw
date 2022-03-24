@@ -6,7 +6,7 @@ import zipfile
 import rarfile
 import datetime
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import QSize, QUrl
 from pathlib import Path
 from hashlib import sha1
@@ -100,9 +100,6 @@ class MyQWidget(QWidget):
             self.fileInfoWidget.setColumnCount(3)
             self.fileInfoWidget.setHorizontalHeaderLabels(['校验是否成功','文件名','SHA1校验码'])
             getShaFileContent = self.readFile(self.fileListWidget.getAllFileListArray()[0])
-            workingMessageBox = QMessageBox()
-            workingMessageBox.setText('正在计算sha1值，请稍等。')
-            workingMessageBox.show()
             for eachFileSha1 in getShaFileContent:
                 tempSha1 = eachFileSha1.split(' *')[0]
                 tempFileName = eachFileSha1.split(' *')[1]
@@ -120,8 +117,6 @@ class MyQWidget(QWidget):
                     self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
                     self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
                     self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
-            
-            workingMessageBox.close()
             self.fileInfoWidget.resizeColumnsToContents()
         else:
             self.fileInfoWidget.setColumnCount(8)
