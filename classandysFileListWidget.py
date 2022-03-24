@@ -28,6 +28,9 @@ class andysFileListWidget(QWidget):
         deleteFileButton = QPushButton('删除')
         clearListButton = QPushButton('清空')
         
+        # mode = 1，仅加载文件。mode = 2，仅加载文件夹
+        #self.mode = 1
+        
         openFileButton.clicked.connect(self.doOpenFileButton)
         deleteFileButton.clicked.connect(self.doDeleteFileButton)
         clearListButton.clicked.connect(self.doClearListButton)
@@ -73,6 +76,9 @@ class andysFileListWidget(QWidget):
         for eachFile in self.allFileListArray:
             self.fileListWidget.addItem(eachFile.name)
             
+    # def getMode(self):
+        # return self.mode
+        
     def getCurrentRowFilePath(self):
         if len(self.allFileListArray) > 0:
             return self.allFileListArray[self.fileListWidget.currentRow()]     
@@ -80,10 +86,6 @@ class andysFileListWidget(QWidget):
     def getAllFileListArray(self):
         return self.allFileListArray
         
-    def setCurrentRowFilePath(self, newPath):
-        if len(self.allFileListArray) > 0:
-            self.allFileListArray[self.fileListWidget.currentRow()] = newPath
-            
     def getLastRowFilePath(self):
         if len(self.allFileListArray) > 0:
             return self.allFileListArray[-1]
@@ -98,6 +100,14 @@ class andysFileListWidget(QWidget):
     def getCurrentRow(self):
         return self.fileListWidget.currentRow()
 
+    def setCurrentRowFilePath(self, newPath):
+        if len(self.allFileListArray) > 0:
+            self.allFileListArray[self.fileListWidget.currentRow()] = newPath
+            
+    # def setMode(self, value):
+        # self.mode = value
+        # return self.mode
+        
     def doCurrentRowChanged(self):
         self.currentRowChangedSignal.emit()
 
@@ -121,10 +131,13 @@ class andysFileListWidget(QWidget):
         if (self.fileListWidget.currentRow() > -1):
             self.fileListWidget.takeItem(self.fileListWidget.row(self.fileListWidget.currentItem()))
             self.allFileListArray.remove(self.allFileListArray[self.fileListWidget.currentRow()])
+        
+        self.fileListChangedSignal.emit()
 
     def doClearListButton(self):
         self.fileListWidget.clear()
         self.allFileListArray = []
+        self.fileListChangedSignal.emit()
 
 
 if __name__ == '__main__':
