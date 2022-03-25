@@ -34,7 +34,7 @@ class MyQWidget(QWidget):
         self.toHtmlButton = QPushButton('输出Html')
         self.toMarkdownButton = QPushButton('输出Markdown')
         self.toSha1Button = QPushButton('输出Sha1')
-        self.setMinimumSize(1400, 600)
+        self.setMinimumSize(800, 400)
         self.setAcceptDrops(True)
 
         # 事件
