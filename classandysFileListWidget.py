@@ -25,22 +25,22 @@ class andysFileListWidget(QWidget):
         self.allFileListArray = []
         self.fileListWidget = QListWidget()
         self.ifFirstDrop = False
-        openFileButton = QPushButton('添加')
-        deleteFileButton = QPushButton('删除')
-        clearListButton = QPushButton('清空')
+        self.openFileButton = QPushButton('添加')
+        self.deleteFileButton = QPushButton('删除')
+        self.clearListButton = QPushButton('清空')
         
         # mode = 1，仅加载文件。mode = 2，仅加载文件夹
         #self.mode = 1
         
-        openFileButton.clicked.connect(self.doOpenFileButton)
-        deleteFileButton.clicked.connect(self.doDeleteFileButton)
-        clearListButton.clicked.connect(self.doClearListButton)
+        self.openFileButton.clicked.connect(self.doOpenFileButton)
+        self.deleteFileButton.clicked.connect(self.doDeleteFileButton)
+        self.clearListButton.clicked.connect(self.doClearListButton)
         self.fileListWidget.currentRowChanged.connect(self.doCurrentRowChanged)
 
         topLayout = QHBoxLayout()
-        topLayout.addWidget(openFileButton)
-        topLayout.addWidget(deleteFileButton)
-        topLayout.addWidget(clearListButton)
+        topLayout.addWidget(self.openFileButton)
+        topLayout.addWidget(self.deleteFileButton)
+        topLayout.addWidget(self.clearListButton)
         bottomLayout = QHBoxLayout()
         bottomLayout.addWidget(self.fileListWidget)
         mainLayout = QVBoxLayout()
@@ -109,6 +109,15 @@ class andysFileListWidget(QWidget):
     def getCurrentRow(self):
         return self.fileListWidget.currentRow()
 
+    def setOpenFileButtonDisabled(self):
+        self.openFileButton.setDisabled(True)
+        
+    def setDeleteFileButtonDisabled(self):
+        self.deleteFileButton.setDisabled(True)
+        
+    def setClearListDisabled(self):
+        self.clearListButton.setDisabled(True)
+        
     def setCurrentRowFilePath(self, newPath):
         if len(self.allFileListArray) > 0:
             self.allFileListArray[self.fileListWidget.currentRow()] = newPath

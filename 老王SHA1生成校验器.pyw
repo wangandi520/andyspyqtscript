@@ -19,6 +19,7 @@ class MyQWidget(QWidget):
         super().__init__(parent)
         self.setWindowTitle('老王SHA1生成校验器v1.0')
         self.fileListWidget = andysFileListWidget()
+        self.fileListWidget.setDeleteFileButtonDisabled()
         self.fileInfoWidget = QTableWidget()
         self.allFileInfoArray = []
         
