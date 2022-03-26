@@ -22,13 +22,9 @@ class MyQWidget(QWidget):
         self.fileInfoWidget = QTableWidget()
         self.allFileInfoArray = []
         
-        leftLayout = QHBoxLayout()
         rightLayout = QVBoxLayout()
         rightTopLayout = QHBoxLayout()
-        outputTLayout = QHBoxLayout()
-        outputSLayout = QHBoxLayout()
-        outputLetterLayout = QHBoxLayout()
-        outputFirstLetterLayout = QHBoxLayout()
+        rightBottomLayout = QHBoxLayout()
         mainLayout = QHBoxLayout()
         
         self.toHtmlButton = QPushButton('输出Html')
@@ -36,6 +32,8 @@ class MyQWidget(QWidget):
         self.toSha1Button = QPushButton('输出Sha1')
         self.setMinimumSize(800, 400)
         self.setAcceptDrops(True)
+        
+        rightLayout.setContentsMargins(9,9,9,9)
 
         # 事件
         self.fileListWidget.fileListChangedSignal.connect(self.fileListChangedSlot)
@@ -44,16 +42,16 @@ class MyQWidget(QWidget):
         self.toSha1Button.clicked.connect(self.toSha1Slot)
         
         # Layout设置
-        leftLayout.addWidget(self.fileListWidget)
         rightTopLayout.addWidget(self.toHtmlButton)
         rightTopLayout.addWidget(self.toMarkdownButton)
         rightTopLayout.addWidget(self.toSha1Button)
         rightLayout.addLayout(rightTopLayout)
+        rightLayout.addLayout(rightBottomLayout)
         rightLayout.addWidget(self.fileInfoWidget)
-        mainLayout.addLayout(leftLayout)
+        mainLayout.addWidget(self.fileListWidget)
         mainLayout.addLayout(rightLayout)
-        mainLayout.setStretchFactor(leftLayout, 1)
-        mainLayout.setStretchFactor(rightLayout, 4)
+        mainLayout.setStretchFactor(self.fileListWidget, 1)
+        mainLayout.setStretchFactor(rightLayout, 2)
         self.setLayout(mainLayout)    
             
     def toHtmlSlot(self):
