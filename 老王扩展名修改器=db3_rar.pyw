@@ -3,7 +3,7 @@
 
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton, QCheckBox
 from PyQt5.QtCore import QUrl
 from pathlib import Path
 
@@ -18,13 +18,16 @@ class MyQWidget(QWidget):
         outputSLayout = QHBoxLayout()
         outputLetterLayout = QHBoxLayout()
         outputFirstLetterLayout = QHBoxLayout()
-        helpLayout = QHBoxLayout()
+        helpLayout = QVBoxLayout()
         mainLayout = QVBoxLayout()
         beforeLabel = QLabel('原扩展名')
         self.beforeLineEdit = QLineEdit()
         self.switchButton = QPushButton('<=>')
         afterLabel = QLabel('新扩展名')
         self.afterLineEdit = QLineEdit()
+        
+        self.addSuffixCheckBox = QCheckBox('给没有扩展名的文件添加新扩展名')
+        self.addSuffixCheckBox.setChecked(True)
         helpLabel = QLabel('确定好扩展名，拖拽文件或文件夹（所有文件）就会生效')
 
         self.setMinimumSize(100, 80)
@@ -38,6 +41,7 @@ class MyQWidget(QWidget):
         topLayout.addWidget(self.switchButton)
         topLayout.addWidget(afterLabel)
         topLayout.addWidget(self.afterLineEdit)
+        helpLayout.addWidget(self.addSuffixCheckBox)
         helpLayout.addWidget(helpLabel)
         mainLayout.addLayout(topLayout)
         mainLayout.addLayout(helpLayout)
@@ -61,18 +65,21 @@ class MyQWidget(QWidget):
                 if (eachFile.toString()[0:8] == 'file:///'):
                     filePath = Path(eachFile.toString()[8:])
                     # 原扩展名
-                    beforeSuffix = '.' + self.beforeLineEdit.text()
+                    if self.addSuffixCheckBox.isChecked():
+                        beforeSuffix = ['.' + self.beforeLineEdit.text(), '']
+                    else:
+                        beforeSuffix = ['.' + self.beforeLineEdit.text()]
                     # 新扩展名
                     afterSuffix = '.' + self.afterLineEdit.text()
                     
                     if Path.is_dir(filePath):
                         for file in Path(filePath).glob('**/*'):
-                            if Path.is_file(file) and file.suffix == beforeSuffix:
+                            if Path.is_file(file) and file.suffix in beforeSuffix:
                                 file.rename(Path(file).parent.joinpath(file.stem + afterSuffix))
-                                print(file.name + '  ->  ' + file.stem)
-                    if Path.is_file(filePath) and filePath.suffix == beforeSuffix:
+                                print(file.name + '  ->  ' + file.stem + afterSuffix)
+                    if Path.is_file(filePath) and filePath.suffix in beforeSuffix:
                         Path(filePath).rename(Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix))
-                        print(Path(filePath).name + '  ->  ' + Path(filePath).stem)
+                        print(Path(filePath).name + '  ->  ' + Path(filePath).stem + afterSuffix)
 
 
     def doSwitch(self):

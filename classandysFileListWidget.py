@@ -3,8 +3,8 @@
 
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QListWidget, QPushButton, QFileDialog
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QListWidget, QPushButton, QFileDialog, QAbstractItemView
+from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from pathlib import Path
 
 
@@ -23,6 +23,7 @@ class andysFileListWidget(QWidget):
 
         self.setAcceptDrops(True)
         self.allFileListArray = []
+        self.currentSelectedFileListArray = []
         self.fileListWidget = QListWidget()
         self.ifFirstDrop = False
         self.openFileButton = QPushButton('添加')
@@ -36,7 +37,9 @@ class andysFileListWidget(QWidget):
         self.deleteFileButton.clicked.connect(self.doDeleteFileButton)
         self.clearListButton.clicked.connect(self.doClearListButton)
         self.fileListWidget.currentRowChanged.connect(self.doCurrentRowChanged)
-
+        self.fileListWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.fileListWidget.selectionModel().selectionChanged.connect(self.doSelectionChanged)
+        
         topLayout = QHBoxLayout()
         topLayout.addWidget(self.openFileButton)
         topLayout.addWidget(self.deleteFileButton)
@@ -105,7 +108,11 @@ class andysFileListWidget(QWidget):
             return self.allFileListArray[rowNumber]
         else:
             return ''
-
+            
+    def getCurrentRowFilePath(self):
+        if len(self.allFileListArray) > 0:
+            return self.allFileListArray[self.fileListWidget.currentRow()]     
+            
     def getCurrentRow(self):
         return self.fileListWidget.currentRow()
 
@@ -126,8 +133,17 @@ class andysFileListWidget(QWidget):
         # self.mode = value
         # return self.mode
         
+    def doSelectionChanged(self):
+        # 被选中的文件的路径
+        selectedListWidgetItemInOtherArray = [self.allFileListArray[getIndex.row()] for getIndex in self.fileListWidget.selectedIndexes()]
+        self.currentSelectedFileListArray = selectedListWidgetItemInOtherArray
+    
     def doCurrentRowChanged(self):
         self.currentRowChangedSignal.emit()
+        # for i in range(self.fileListWidget.count()):
+            # print(self.fileListWidget.item(i).text())
+        #for eachItem in self.fileListWidget.selectedItems():
+            # print(self.fileListWidget.currentRow())
 
     def doOpenFileButton(self):
         # 打开文件。如果是文件夹请拖拽。
