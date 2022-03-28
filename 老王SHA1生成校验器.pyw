@@ -6,7 +6,7 @@ import zipfile
 import rarfile
 import datetime
 
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QProgressBar
 from PyQt5.QtCore import QSize, QUrl
 from pathlib import Path
 from hashlib import sha1
@@ -17,17 +17,22 @@ from classandysFileListWidget import andysFileListWidget
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('老王SHA1生成校验器v1.0')
+        self.setWindowTitle('老王SHA1生成校验器v1.1')
         self.fileListWidget = andysFileListWidget()
         self.fileListWidget.setDeleteFileButtonDisabled()
         self.fileInfoWidget = QTableWidget()
         self.allFileInfoArray = []
+        self.sha1ProgressBar = QProgressBar()
+        self.sha1ProgressBar.setMinimum(0)
+        self.sha1ProgressBar.setMaximum(100)
+        self.sha1ProgressBar.setValue(0)
         
         rightLayout = QVBoxLayout()
         rightTopLayout = QHBoxLayout()
         rightBottomLayout = QHBoxLayout()
-        mainLayout = QHBoxLayout()
+        mainLayout = QVBoxLayout()
         
+        self.getAllSha1Button = QPushButton('计算Sha1')
         self.toHtmlButton = QPushButton('输出Html')
         self.toMarkdownButton = QPushButton('输出Markdown')
         self.toSha1Button = QPushButton('输出Sha1')
@@ -38,11 +43,13 @@ class MyQWidget(QWidget):
 
         # 事件
         self.fileListWidget.fileListChangedSignal.connect(self.fileListChangedSlot)
+        self.getAllSha1Button.clicked.connect(self.getAllSha1)
         self.toHtmlButton.clicked.connect(self.toHtmlSlot)
         self.toMarkdownButton.clicked.connect(self.toMarkdownSlot)
         self.toSha1Button.clicked.connect(self.toSha1Slot)
         
         # Layout设置
+        rightTopLayout.addWidget(self.getAllSha1Button)
         rightTopLayout.addWidget(self.toHtmlButton)
         rightTopLayout.addWidget(self.toMarkdownButton)
         rightTopLayout.addWidget(self.toSha1Button)
@@ -51,6 +58,7 @@ class MyQWidget(QWidget):
         rightLayout.addWidget(self.fileInfoWidget)
         mainLayout.addWidget(self.fileListWidget)
         mainLayout.addLayout(rightLayout)
+        mainLayout.addWidget(self.sha1ProgressBar)
         mainLayout.setStretchFactor(self.fileListWidget, 1)
         mainLayout.setStretchFactor(rightLayout, 2)
         self.setLayout(mainLayout)    
@@ -88,17 +96,22 @@ class MyQWidget(QWidget):
             newContent = newContent + eachInfo[0] + ' ' + eachInfo[7] + '\n'
             returnFileInfo.append(eachInfo[7] + ' *' + eachInfo[0] + '\n')
         self.writeFile('sha', returnFileInfo)
- 
+    
     def fileListChangedSlot(self):
         if (len(self.fileListWidget.getAllFileListArray()) == 0):
             self.fileInfoWidget.clear()
             self.fileInfoWidget.setColumnCount(0)
             self.fileInfoWidget.setRowCount(0)
             self.allFileInfoArray.clear()
-        elif (len(self.fileListWidget.getAllFileListArray()) == 1 and self.fileListWidget.getAllFileListArray()[0].suffix == '.sha'):
+            self.sha1ProgressBar.setValue(0)
+    
+    def getAllSha1(self):
+        if (len(self.fileListWidget.getAllFileListArray()) == 1 and self.fileListWidget.getAllFileListArray()[0].suffix == '.sha'):
+            self.sha1ProgressBar.setValue(0)
             self.fileInfoWidget.setColumnCount(3)
             self.fileInfoWidget.setHorizontalHeaderLabels(['校验是否成功','文件名','SHA1校验码'])
             getShaFileContent = self.readFile(self.fileListWidget.getAllFileListArray()[0])
+            progressStep = int(100 / len(getShaFileContent))
             for eachFileSha1 in getShaFileContent:
                 tempSha1 = eachFileSha1.split(' *')[0]
                 tempFileName = eachFileSha1.split(' *')[1]
@@ -116,11 +129,15 @@ class MyQWidget(QWidget):
                     self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
                     self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
                     self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+                self.sha1ProgressBar.setValue(progressStep)
+            self.sha1ProgressBar.setValue(100)
             self.fileInfoWidget.resizeColumnsToContents()
         else:
+            self.sha1ProgressBar.setValue(0)
             self.fileInfoWidget.setColumnCount(8)
             self.fileInfoWidget.setHorizontalHeaderLabels(['文件名','文件类型','文件大小','修改时间','压缩包内文件数量','压缩包内文件夹数量','扩展名对应的文件数量','SHA1校验码'])
-            for i in range(self.fileInfoWidget.rowCount(), len(self.fileListWidget.getAllFileListArray())):
+            progressStep = int(100 / (len(self.fileListWidget.getAllFileListArray()) - self.fileInfoWidget.rowCount()))
+            for i in range(self.fileInfoWidget.rowCount(), len(self.fileListWidget.getAllFileListArray())):  
                 self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
                 eachFilePath = self.fileListWidget.getAllFileListArray()[i]
                 dirCount = 0
@@ -180,7 +197,8 @@ class MyQWidget(QWidget):
                 eachFileInfoArray.append(tempFileType[:-2])
                 eachFileInfoArray.append(tmpSha1)
                 self.allFileInfoArray.append(eachFileInfoArray)
-            
+                self.sha1ProgressBar.setValue(self.sha1ProgressBar.value() + progressStep)
+            self.sha1ProgressBar.setValue(100)    
             self.fileInfoWidget.resizeColumnsToContents()
         
     def formatFileSize(self, sizeBytes):

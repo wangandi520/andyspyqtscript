@@ -62,7 +62,6 @@ class andysFileListWidget(QWidget):
                     self.ifFirstDrop = False
                     self.allFileListArray.append(Path(filePath[8:]))
                     self.fileListWidget.addItem(Path(filePath[8:]).name)
-                    self.fileListChangedSignal.emit()
                 if Path.is_dir(Path(filePath[8:])):
                     if(self.ifFirstDrop == False and len(self.allFileListArray) == 0):
                         self.ifFirstDrop = True
@@ -72,7 +71,7 @@ class andysFileListWidget(QWidget):
                         if Path.is_file(file):
                             self.allFileListArray.append(file)
                             self.fileListWidget.addItem(file.name)
-                            self.fileListChangedSignal.emit()
+        self.fileListChangedSignal.emit()
         
     def dragMoveEvent(self, event):
         event.accept()
@@ -153,26 +152,23 @@ class andysFileListWidget(QWidget):
                 if Path.is_file(Path(eachFilePath)):
                     self.allFileListArray.append(Path(eachFilePath))
                     self.fileListWidget.addItem(Path(eachFilePath).name)
-                    self.fileListChangedSignal.emit()
                 if Path.is_dir(Path(eachFilePath)):
                     for eacheachFilePath in Path(eachFilePath).glob('**/*'):
                         if Path.is_file(eacheachFilePath):
                             self.allFileListArray.append(eacheachFilePath)
                             self.fileListWidget.addItem(eacheachFilePath.name)
-                            self.fileListChangedSignal.emit()
+        self.fileListChangedSignal.emit()
         
     def doDeleteFileButton(self):
         if (self.fileListWidget.currentRow() > -1):
             self.fileListWidget.takeItem(self.fileListWidget.row(self.fileListWidget.currentItem()))
             self.allFileListArray.remove(self.allFileListArray[self.fileListWidget.currentRow()])
-        
         self.fileListChangedSignal.emit()
 
     def doClearListButton(self):
         self.fileListWidget.clear()
         self.allFileListArray = []
         self.fileListChangedSignal.emit()
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
