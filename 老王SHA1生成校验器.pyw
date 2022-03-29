@@ -61,7 +61,8 @@ class MyQWidget(QWidget):
         mainLayout.addWidget(self.sha1ProgressBar)
         mainLayout.setStretchFactor(self.fileListWidget, 1)
         mainLayout.setStretchFactor(rightLayout, 2)
-        self.setLayout(mainLayout)    
+        self.setLayout(mainLayout)
+        self.sha1ProgressBar.close()
             
     def toHtmlSlot(self):
         # 转换成html格式
@@ -106,6 +107,7 @@ class MyQWidget(QWidget):
             self.sha1ProgressBar.setValue(0)
     
     def getAllSha1(self):
+        self.sha1ProgressBar.show()
         if (len(self.fileListWidget.getAllFileListArray()) == 1 and self.fileListWidget.getAllFileListArray()[0].suffix == '.sha'):
             self.sha1ProgressBar.setValue(0)
             self.fileInfoWidget.setColumnCount(3)
@@ -200,6 +202,7 @@ class MyQWidget(QWidget):
                 self.sha1ProgressBar.setValue(self.sha1ProgressBar.value() + progressStep)
             self.sha1ProgressBar.setValue(100)    
             self.fileInfoWidget.resizeColumnsToContents()
+        self.sha1ProgressBar.close()
         
     def formatFileSize(self, sizeBytes):
     # 格式化文件大小
