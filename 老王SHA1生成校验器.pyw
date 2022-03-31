@@ -194,7 +194,10 @@ class MyQWidget(QWidget):
                 self.fileInfoWidget.setItem(i, 7, QTableWidgetItem(tmpSha1))
 
                 eachFileInfoArray = []
-                eachFileInfoArray.append(str(eachFilePath))
+                if self.fileListWidget.getIfFirstDrop():
+                    eachFileInfoArray.append(str(eachFilePath.relative_to(self.fileListWidget.getFirstDropDir())))
+                else:
+                    eachFileInfoArray.append(str(eachFilePath))
                 eachFileInfoArray.append(eachFilePath.suffix[1:])
                 eachFileInfoArray.append((self.formatFileSize(eachFilePath.stat().st_size)))
                 eachFileInfoArray.append(
@@ -247,7 +250,7 @@ class MyQWidget(QWidget):
         return sha1Obj.hexdigest()
 
     def writeFile(self, suffix, filereadlines):
-        if self.fileListWidget.getFirstDrop():
+        if self.fileListWidget.getIfFirstDrop():
             newfile = open(str(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(
                 self.fileListWidget.getAllFileListArray()[0].parent.name)) + '.' + suffix, mode='w', encoding='UTF-8')
         else:

@@ -26,6 +26,7 @@ class andysFileListWidget(QWidget):
         self.currentSelectedFileListArray = []
         self.fileListWidget = QListWidget()
         self.ifFirstDrop = False
+        self.firstDropDir = ''
         self.openFileButton = QPushButton('添加')
         self.deleteFileButton = QPushButton('删除')
         self.clearListButton = QPushButton('清空')
@@ -65,6 +66,7 @@ class andysFileListWidget(QWidget):
                 if Path.is_dir(Path(filePath[8:])):
                     if(self.ifFirstDrop == False and len(self.allFileListArray) == 0):
                         self.ifFirstDrop = True
+                        self.firstDropDir = Path(filePath[8:])
                     else:
                         self.ifFirstDrop = False
                     for file in Path(filePath[8:]).glob('**/*'):
@@ -87,8 +89,11 @@ class andysFileListWidget(QWidget):
     # def getMode(self):
         # return self.mode
         
-    def getFirstDrop(self):
+    def getIfFirstDrop(self):
         return self.ifFirstDrop
+        
+    def getFirstDropDir(self):
+        return self.firstDropDir
         
     def getCurrentRowFilePath(self):
         if len(self.allFileListArray) > 0:
