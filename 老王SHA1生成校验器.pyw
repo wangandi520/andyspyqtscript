@@ -12,6 +12,7 @@ from PyQt5.QtCore import QSize, QUrl
 from pathlib import Path
 from hashlib import sha1
 from classandysFileListWidget import andysFileListWidget
+from classandysAboutButton import andysDonateButton
 
 
 # pip install pyqt5 pyqt5-tools rarfile
@@ -38,6 +39,7 @@ class MyQWidget(QWidget):
         self.toHtmlButton = QPushButton('输出Html')
         self.toMarkdownButton = QPushButton('输出Markdown')
         self.toSha1Button = QPushButton('输出Sha1')
+        self.donateButton = andysDonateButton('捐赠')
         self.setMinimumSize(800, 400)
         self.setAcceptDrops(True)
 
@@ -55,6 +57,7 @@ class MyQWidget(QWidget):
         rightTopLayout.addWidget(self.toHtmlButton)
         rightTopLayout.addWidget(self.toMarkdownButton)
         rightTopLayout.addWidget(self.toSha1Button)
+        rightTopLayout.addWidget(self.donateButton)
         rightLayout.addLayout(rightTopLayout)
         rightLayout.addLayout(rightBottomLayout)
         rightLayout.addWidget(self.fileInfoWidget)
