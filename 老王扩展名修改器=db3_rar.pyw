@@ -6,6 +6,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton, QCheckBox
 from PyQt5.QtCore import QUrl
 from pathlib import Path
+from classandysAboutButton import andysDonateButton
 
 # pip install pyqt5 pyqt5-tools pypinyin
 
@@ -18,7 +19,8 @@ class MyQWidget(QWidget):
         outputSLayout = QHBoxLayout()
         outputLetterLayout = QHBoxLayout()
         outputFirstLetterLayout = QHBoxLayout()
-        helpLayout = QVBoxLayout()
+        helpLayout01 = QVBoxLayout()
+        helpLayout02 = QHBoxLayout()
         mainLayout = QVBoxLayout()
         beforeLabel = QLabel('原扩展名')
         self.beforeLineEdit = QLineEdit()
@@ -29,6 +31,7 @@ class MyQWidget(QWidget):
         self.addSuffixCheckBox = QCheckBox('给没有扩展名的文件添加新扩展名')
         self.addSuffixCheckBox.setChecked(True)
         helpLabel = QLabel('确定好扩展名，拖拽文件或文件夹（所有文件）就会生效')
+        donateButton = andysDonateButton('捐赠')
 
         self.setMinimumSize(100, 80)
         self.allFilePathList = []
@@ -41,10 +44,12 @@ class MyQWidget(QWidget):
         topLayout.addWidget(self.switchButton)
         topLayout.addWidget(afterLabel)
         topLayout.addWidget(self.afterLineEdit)
-        helpLayout.addWidget(self.addSuffixCheckBox)
-        helpLayout.addWidget(helpLabel)
+        helpLayout01.addWidget(self.addSuffixCheckBox)
+        helpLayout02.addWidget(helpLabel)
+        helpLayout02.addWidget(donateButton)
         mainLayout.addLayout(topLayout)
-        mainLayout.addLayout(helpLayout)
+        mainLayout.addLayout(helpLayout01)
+        mainLayout.addLayout(helpLayout02)
         self.setLayout(mainLayout)
                 
         # 从文件名读取参数
