@@ -124,18 +124,38 @@ class MyQWidget(QWidget):
                 tempFileName = eachFileSha1.split(' *')[1]
                 if not Path.exists(Path(tempFileName)):
                     tempFileName = str(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(tempFileName))
-                if self.getSha1(tempFileName) == tempSha1:
-                    rowCount = self.fileInfoWidget.rowCount()
-                    self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
-                    self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('校验成功'))
-                    self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
-                    self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+                print(Path(tempFileName))
+                print(Path(tempFileName).name)
+                print(str(Path(tempFileName).name) == str(Path(tempFileName)))
+                if str(Path(tempFileName)) == str(Path(tempFileName).name):
+                    if self.getSha1(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(tempFileName)) == tempSha1:
+                        rowCount = self.fileInfoWidget.rowCount()
+                        self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
+                        self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('校验成功'))
+                        print('1')
+                        self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
+                        self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+                    else:
+                        rowCount = self.fileInfoWidget.rowCount()
+                        self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
+                        print('2')
+                        self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
+                        self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
+                        self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
                 else:
-                    rowCount = self.fileInfoWidget.rowCount()
-                    self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
-                    self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
-                    self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
-                    self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+                    if self.getSha1(tempFileName) == tempSha1:
+                        rowCount = self.fileInfoWidget.rowCount()
+                        self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
+                        self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('校验成功'))
+                        self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
+                        self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+                    else:
+                        rowCount = self.fileInfoWidget.rowCount()
+                        self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
+                        self.fileInfoWidget.setItem(rowCount, 0, QTableWidgetItem('!!校验失败'))
+                        self.fileInfoWidget.setItem(rowCount, 1, QTableWidgetItem(tempFileName))
+                        self.fileInfoWidget.setItem(rowCount, 2, QTableWidgetItem(tempSha1))
+
                 self.sha1ProgressBar.setValue(progressStep)
             self.sha1ProgressBar.setValue(100)
             self.fileInfoWidget.resizeColumnsToContents()
