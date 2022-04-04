@@ -26,7 +26,7 @@ class andysFileListWidget(QWidget):
         self.currentSelectedFileListArray = []
         self.fileListWidget = QListWidget()
         self.ifFirstDrop = False
-        self.firstDropDir = ''
+        self.firstDropDir = False
         self.openFileButton = QPushButton('添加')
         self.deleteFileButton = QPushButton('删除')
         self.clearListButton = QPushButton('清空')
@@ -174,6 +174,8 @@ class andysFileListWidget(QWidget):
         self.fileListWidget.clear()
         self.allFileListArray = []
         self.fileListChangedSignal.emit()
+        self.ifFirstDrop = False
+        self.firstDropDir = False
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
