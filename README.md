@@ -18,6 +18,15 @@ from 文件名 import class名，例如from classandysFileListWidget import andy
 
 ## 老王SHA1生成校验器
 
+**1.2版更新：**
+支持显示是否加密
+
+**1.1版更新：**
+修复bug
+
+**1.0版更新：**
+PyQt5第一次编写
+
 可拖拽
 
 生成文件信息，html，markdown或sha格式

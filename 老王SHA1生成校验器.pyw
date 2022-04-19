@@ -72,7 +72,7 @@ class MyQWidget(QWidget):
     def toHtmlSlot(self):
         # 转换成html格式
         returnFileInfo = [
-            '<html><head><title>文件信息</title><style>table{width:auto;}table,td{border:1px solid #000000;table-layout:fixed;border-collapse:collapse;}table td:first-child{width:auto;}table td{min-width:100px;}a{text-decoration: none;}table tr:first-child{background-color:#eee;}tr:hover{background-color:#eee;}</style></head><body><table id="allFileTable"><tr><td>文件夹名</td><td>文件类型</td><td>文件大小</td><td>修改时间</td><td>压缩包内文件数量</td><td>压缩包内文件夹数量</td><td>扩展名对应的文件数量</td><td>SHA1校验码</td></tr>']
+            '<html><head><title>文件信息</title><style>table{width:auto;}table,td{border:1px solid #000000;table-layout:fixed;border-collapse:collapse;}table td:first-child{width:auto;}table td{min-width:100px;}a{text-decoration: none;}table tr:first-child{background-color:#eee;}tr:hover{background-color:#eee;}</style></head><body><table id="allFileTable"><tr><td>文件夹名</td><td>文件类型</td><td>文件大小</td><td>修改时间</td><td>是否加密</td><td>压缩包内文件数量</td><td>压缩包内文件夹数量</td><td>扩展名对应的文件数量</td><td>SHA1校验码</td></tr>']
 
         for eachInfo in self.allFileInfoArray:
             newContent = '<tr>'
@@ -84,7 +84,7 @@ class MyQWidget(QWidget):
 
     def toMarkdownSlot(self):
         # 转换成markdown格式
-        returnFileInfo = ['|文件夹名|文件类型|文件大小|修改时间|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码|\n',
+        returnFileInfo = ['|文件夹名|文件类型|文件大小|修改时间|是否加密|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码|\n',
                           '| --- | --- | --- | --- | --- | --- | --- | --- |\n']
 
         for eachInfo in self.allFileInfoArray:
@@ -97,9 +97,7 @@ class MyQWidget(QWidget):
     def toSha1Slot(self):
         returnFileInfo = []
         for eachInfo in self.allFileInfoArray:
-            newContent = ''
-            newContent = newContent + eachInfo[0] + ' ' + eachInfo[7] + '\n'
-            returnFileInfo.append(eachInfo[7] + ' *' + eachInfo[0] + '\n')
+            returnFileInfo.append(eachInfo[8] + ' *' + eachInfo[0] + '\n')
         self.writeFile('sha', returnFileInfo)
 
     def fileListChangedSlot(self):
@@ -163,7 +161,7 @@ class MyQWidget(QWidget):
             self.sha1ProgressBar.setValue(0)
             self.fileInfoWidget.setColumnCount(8)
             self.fileInfoWidget.setHorizontalHeaderLabels(
-                ['文件名', '文件类型', '文件大小', '修改时间', '压缩包内文件数量', '压缩包内文件夹数量', '扩展名对应的文件数量', 'SHA1校验码'])
+                ['文件名', '文件类型', '文件大小', '修改时间', '是否加密', '压缩包内文件数量', '压缩包内文件夹数量', '扩展名对应的文件数量', 'SHA1校验码'])
             progressStep = int(100 / (len(self.fileListWidget.getAllFileListArray()) - self.fileInfoWidget.rowCount()))
             for i in range(self.fileInfoWidget.rowCount(), len(self.fileListWidget.getAllFileListArray())):
                 self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
@@ -175,7 +173,9 @@ class MyQWidget(QWidget):
 
                 if zipfile.is_zipfile(eachFilePath):
                     zf = zipfile.ZipFile(eachFilePath)
+                    isEncrypted = False
                     for eachFile in zf.infolist():
+                        isEncrypted = eachFile.flag_bits & 0x1 
                         if eachFile.is_dir():
                             dirCount = dirCount + 1
                         else:
@@ -187,6 +187,7 @@ class MyQWidget(QWidget):
                     zf.close()
                 if rarfile.is_rarfile(eachFilePath):
                     rf = rarfile.RarFile(eachFilePath)
+                    isEncrypted = rf.needs_password()
                     for eachFile in rf.infolist():
                         if eachFile.is_dir():
                             dirCount = dirCount + 1
@@ -211,10 +212,14 @@ class MyQWidget(QWidget):
                 self.fileInfoWidget.setItem(i, 2, QTableWidgetItem((self.formatFileSize(eachFilePath.stat().st_size))))
                 self.fileInfoWidget.setItem(i, 3, QTableWidgetItem(
                     datetime.datetime.fromtimestamp(eachFilePath.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S')))
-                self.fileInfoWidget.setItem(i, 4, QTableWidgetItem(str(fileCount)))
-                self.fileInfoWidget.setItem(i, 5, QTableWidgetItem(str(dirCount)))
-                self.fileInfoWidget.setItem(i, 6, QTableWidgetItem(tempFileType[:-2]))
-                self.fileInfoWidget.setItem(i, 7, QTableWidgetItem(tmpSha1))
+                if isEncrypted:
+                    self.fileInfoWidget.setItem(i, 4, QTableWidgetItem('是'))
+                else:
+                    self.fileInfoWidget.setItem(i, 4, QTableWidgetItem('否'))
+                self.fileInfoWidget.setItem(i, 5, QTableWidgetItem(str(fileCount)))
+                self.fileInfoWidget.setItem(i, 6, QTableWidgetItem(str(dirCount)))
+                self.fileInfoWidget.setItem(i, 7, QTableWidgetItem(tempFileType[:-2]))
+                self.fileInfoWidget.setItem(i, 8, QTableWidgetItem(tmpSha1))
 
                 eachFileInfoArray = []
                 if self.fileListWidget.getIfFirstDrop():
@@ -224,7 +229,11 @@ class MyQWidget(QWidget):
                 eachFileInfoArray.append(eachFilePath.suffix[1:])
                 eachFileInfoArray.append((self.formatFileSize(eachFilePath.stat().st_size)))
                 eachFileInfoArray.append(
-                    datetime.datetime.fromtimestamp(eachFilePath.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S'))
+                    datetime.datetime.fromtimestamp(eachFilePath.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S'))     
+                if isEncrypted:
+                    eachFileInfoArray.append('是')
+                else:
+                    eachFileInfoArray.append('否')
                 eachFileInfoArray.append(str(fileCount))
                 eachFileInfoArray.append(str(dirCount))
                 eachFileInfoArray.append(tempFileType[:-2])
