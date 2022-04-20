@@ -20,7 +20,7 @@ from classandysAboutButton import andysDonateButton
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('老王SHA1生成校验器v1.1')
+        self.setWindowTitle('老王SHA1生成校验器v1.2')
         self.fileListWidget = andysFileListWidget()
         self.fileListWidget.setDeleteFileButtonDisabled()
         self.fileInfoWidget = QTableWidget()
@@ -171,9 +171,9 @@ class MyQWidget(QWidget):
                 fileType = {}
                 tempFileType = ''
 
+                isEncrypted = False
                 if zipfile.is_zipfile(eachFilePath):
                     zf = zipfile.ZipFile(eachFilePath)
-                    isEncrypted = False
                     for eachFile in zf.infolist():
                         isEncrypted = eachFile.flag_bits & 0x1 
                         if eachFile.is_dir():
