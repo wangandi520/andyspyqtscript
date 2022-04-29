@@ -5,6 +5,7 @@ import sys
 import zipfile
 import rarfile
 import datetime
+import time
 
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, \
     QTableWidgetItem, QHeaderView, QProgressBar
@@ -284,9 +285,10 @@ class MyQWidget(QWidget):
     def writeFile(self, suffix, filereadlines):
         if self.fileListWidget.getIfFirstDrop():
             newfile = open(str(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(
-                self.fileListWidget.getAllFileListArray()[0].parent.name)) + '.' + suffix, mode='w', encoding='UTF-8')
+                self.fileListWidget.getAllFileListArray()[0].parent.name)) + time.strftime("%Y%m%d", time.localtime()) + '.' + suffix, mode='w', encoding='UTF-8')
         else:
-            newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + '.' + suffix, mode='w', encoding='UTF-8')
+            print('df')
+            newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + time.strftime("%Y%m%d", time.localtime()) + '.' + suffix, mode='w', encoding='UTF-8')
         newfile.writelines(filereadlines)
         newfile.close()
 
