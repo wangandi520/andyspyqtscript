@@ -160,7 +160,7 @@ class MyQWidget(QWidget):
             self.fileInfoWidget.resizeColumnsToContents()
         else:
             self.sha1ProgressBar.setValue(0)
-            self.fileInfoWidget.setColumnCount(8)
+            self.fileInfoWidget.setColumnCount(9)
             self.fileInfoWidget.setHorizontalHeaderLabels(
                 ['文件名', '文件类型', '文件大小', '修改时间', '是否加密', '压缩包内文件数量', '压缩包内文件夹数量', '扩展名对应的文件数量', 'SHA1校验码'])
             progressStep = int(100 / (len(self.fileListWidget.getAllFileListArray()) - self.fileInfoWidget.rowCount()))
