@@ -16,7 +16,7 @@ from classandysFileListWidget import andysFileListWidget
 from classandysAboutButton import andysDonateButton
 
 
-# pip install pyqt5 pyqt5-tools rarfile
+# pip install pyqt5 pyqt5-tools rarfile pillow
 
 class MyQWidget(QWidget):
     def __init__(self, parent=None):

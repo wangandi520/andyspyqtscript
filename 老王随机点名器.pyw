@@ -15,7 +15,7 @@ from PyQt5.QtCore import QDir, QTimer, QDateTime, Qt
 from PyQt5 import QtWidgets, QtCore
 from pathlib import Path
 
-# pip install pyqt5 pyqt5-tools pyinstaller pandas openpyxl
+# pip install pyqt5 pyqt5-tools pyinstaller pandas openpyxl pillow
 
 '''
 老王随机点名器v1.1

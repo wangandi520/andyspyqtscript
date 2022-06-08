@@ -8,7 +8,7 @@ from PyQt5.QtCore import QUrl
 from pathlib import Path
 from classandysAboutButton import andysDonateButton
 
-# pip install pyqt5 pyqt5-tools pypinyin
+# pip install pyqt5 pyqt5-tools pypinyin pillow
 
 class MyQWidget(QWidget):
     def __init__(self, parent=None):

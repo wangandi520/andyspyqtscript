@@ -10,7 +10,7 @@ from pypinyin import pinyin, lazy_pinyin, Style
 from pathlib import Path
 from classandysFileListWidget import andysFileListWidget
 
-# pip install pyqt5 pyqt5-tools pypinyin opencc-python-reimplemented
+# pip install pyqt5 pyqt5-tools pypinyin opencc-python-reimplemented pillow
 
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
