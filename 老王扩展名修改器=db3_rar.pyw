@@ -80,19 +80,23 @@ class MyQWidget(QWidget):
                     if Path.is_dir(filePath):
                         for file in Path(filePath).glob('**/*'):
                             if Path.is_file(file) and file.suffix in beforeSuffix:
-                                file.rename(Path(file).parent.joinpath(file.stem + afterSuffix))
-                                print(file.name + '  ->  ' + file.stem + afterSuffix)
+                                newFileName = Path(file).parent.joinpath(file.stem + afterSuffix)
+                                if not newFileName.exists():
+                                    file.rename(newFileName)
+                                    print(file.name + '  ->  ' + file.stem + afterSuffix)
                     if Path.is_file(filePath) and filePath.suffix in beforeSuffix:
-                        Path(filePath).rename(Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix))
-                        print(Path(filePath).name + '  ->  ' + Path(filePath).stem + afterSuffix)
+                        newFileName = Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix)
+                        if not newFileName.exists():
+                            Path(filePath).rename(Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix))
+                            print(Path(filePath).name + '  ->  ' + Path(filePath).stem + afterSuffix)
 
 
     def doSwitch(self):
         tempText = self.beforeLineEdit.text()
         self.beforeLineEdit.setText(self.afterLineEdit.text())
-        self.afterLineEdit.setText(tempText)
-        
-        
+        self.afterLineEdit.setText(tempText)        
+     
+     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     mywidget = MyQWidget()
