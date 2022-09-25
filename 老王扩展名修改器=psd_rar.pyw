@@ -1,5 +1,6 @@
 # encoding:utf-8
 # https://github.com/wangandi520
+# v1.1
 
 import sys
 
@@ -10,6 +11,14 @@ from classandysAboutButton import andysDonateButton
 
 # pip install pyqt5 pyqt5-tools pypinyin pillow
 
+    
+def doChangeSuffix(filePath, afterSuffix):
+    # type(filePath): Path
+    newFileName = Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix)
+    if not newFileName.exists():
+        Path(filePath).rename(newFileName)
+        print(Path(filePath).name + '  ->  ' + Path(filePath).stem + afterSuffix)
+        
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -28,6 +37,7 @@ class MyQWidget(QWidget):
         afterLabel = QLabel('新扩展名')
         self.afterLineEdit = QLineEdit()
         
+        self.changeAllSuffixCheckBox = QCheckBox('所有旧扩展名都改成新扩展名')
         self.addSuffixCheckBox = QCheckBox('给没有扩展名的文件添加新扩展名')
         self.addSuffixCheckBox.setChecked(True)
         helpLabel = QLabel('确定好扩展名，拖拽文件或文件夹（所有文件）就会生效')
@@ -44,6 +54,7 @@ class MyQWidget(QWidget):
         topLayout.addWidget(self.switchButton)
         topLayout.addWidget(afterLabel)
         topLayout.addWidget(self.afterLineEdit)
+        helpLayout01.addWidget(self.changeAllSuffixCheckBox)
         helpLayout01.addWidget(self.addSuffixCheckBox)
         helpLayout02.addWidget(helpLabel)
         helpLayout02.addWidget(donateButton)
@@ -62,11 +73,11 @@ class MyQWidget(QWidget):
 
     def dragEnterEvent(self, event):
         event.acceptProposedAction()
-    
-    
+            
     def dropEvent(self, event):
         if self.beforeLineEdit.text() != '' and self.afterLineEdit.text() != '':
             for eachFile in event.mimeData().urls():
+                print(eachFile)
                 if (eachFile.toString()[0:8] == 'file:///'):
                     filePath = Path(eachFile.toString()[8:])
                     # 原扩展名
@@ -79,17 +90,14 @@ class MyQWidget(QWidget):
                     
                     if Path.is_dir(filePath):
                         for file in Path(filePath).glob('**/*'):
-                            if Path.is_file(file) and file.suffix in beforeSuffix:
-                                newFileName = Path(file).parent.joinpath(file.stem + afterSuffix)
-                                if not newFileName.exists():
-                                    file.rename(newFileName)
-                                    print(file.name + '  ->  ' + file.stem + afterSuffix)
-                    if Path.is_file(filePath) and filePath.suffix in beforeSuffix:
-                        newFileName = Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix)
-                        if not newFileName.exists():
-                            Path(filePath).rename(Path(filePath).parent.joinpath(Path(filePath).stem + afterSuffix))
-                            print(Path(filePath).name + '  ->  ' + Path(filePath).stem + afterSuffix)
-
+                            if Path.is_file(file) and self.changeAllSuffixCheckBox.isChecked():
+                                doChangeSuffix(file, afterSuffix)
+                            elif Path.is_file(file) and file.suffix in beforeSuffix:
+                                    doChangeSuffix(file, afterSuffix)
+                    if Path.is_file(filePath) and self.changeAllSuffixCheckBox.isChecked():
+                        doChangeSuffix(filePath, afterSuffix)
+                    elif Path.is_file(filePath) and filePath.suffix in beforeSuffix:
+                            doChangeSuffix(filePath, afterSuffix)
 
     def doSwitch(self):
         tempText = self.beforeLineEdit.text()
