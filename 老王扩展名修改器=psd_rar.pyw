@@ -22,7 +22,7 @@ def doChangeSuffix(filePath, afterSuffix):
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('老王扩展名修改器v1.0')
+        self.setWindowTitle('老王扩展名修改器v1.1')
         topLayout = QHBoxLayout()
         outputTLayout = QHBoxLayout()
         outputSLayout = QHBoxLayout()
