@@ -2,7 +2,6 @@
 # https://github.com/wangandi520
 
 import sys
-
 from opencc import OpenCC
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton, QRadioButton
 from PyQt5.QtCore import QSize, QUrl
