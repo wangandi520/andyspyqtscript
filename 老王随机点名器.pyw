@@ -240,7 +240,6 @@ class MyQWidget(QWidget):
         donateAlipayImg = donateAlipayImg.scaled(800, 800, Qt.KeepAspectRatio)
         donateMes.setIconPixmap(donateAlipayImg)
         donateMes.setWindowTitle("感谢捐赠支持。")
-        donateMes.setText('支付宝：30204977@qq.com')
         yesButton = donateMes.addButton("关闭",QMessageBox.YesRole)
         donateMes.exec()
         if (donateMes.clickedButton() == yesButton):
