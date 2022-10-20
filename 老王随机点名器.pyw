@@ -108,7 +108,7 @@ class MyQWidget(QWidget):
         currentClockTimer.start(1000)
         currentClockTimer.timeout.connect(self.showNowTime)
         
-        self.changNameLabelTimer = QTimer(self)
+        self.changeNameLabelTimer = QTimer(self)
         
         # 设置字体尺寸范围
         self.fontSizeLabel = QLabel("字号: 100")
@@ -367,18 +367,19 @@ class MyQWidget(QWidget):
             return;
         if (self.startButton.text() == "开始" and self.allOpenFileContentList[self.fileListWidget.currentRow()] != 0):
             #connect(timer, SIGNAL(timeout()), this, SLOT(randomName()));
-            #self.changNameLabelTimer = QTimer(self)
-            self.changNameLabelTimer.start(100)
-            self.changNameLabelTimer.timeout.connect(self.showRandomName)
+            #self.changeNameLabelTimer = QTimer(self)
+            self.changeNameLabelTimer.start(100)
+            self.changeNameLabelTimer.timeout.connect(self.showRandomName)
             self.startButton.setText("停止");
             self.absentButton.setDisabled(True)
+            self.changeNameLabelTimer.start(self.speedSlider.value())
             # 删除被点过的名字
             if (len(self.showNameLabel.text()) != 0):
                 self.tempShowNameLabel = self.showNameLabel.text()
                 self.allOpenFileContentList[self.fileListWidget.currentRow()].remove(self.showNameLabel.text())
                 self.changeFileCountForCurrentRow()
         elif self.startButton.text() == "停止":
-            self.changNameLabelTimer.timeout.disconnect(self.showRandomName)
+            self.changeNameLabelTimer.timeout.disconnect(self.showRandomName)
             self.absentButton.setDisabled(False)
             self.startButton.setText("开始");
             
@@ -398,7 +399,7 @@ class MyQWidget(QWidget):
 
     def setSpeed(self):
         # 调整切换速度
-        self.changNameLabelTimer.start(self.speedSlider.value())
+        self.changeNameLabelTimer.start(self.speedSlider.value())
         self.speedLabel.setText('速度(毫秒): ' + str(self.speedSlider.value()))
 
 

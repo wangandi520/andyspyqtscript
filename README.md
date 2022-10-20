@@ -4,6 +4,8 @@
 
 需要pip install pyinstaller
 
+安装所有需要的pip包，pip install -r requirement.txt
+
 部分脚本命令行版[https://github.com/wangandi520/andyspythonscript](https://github.com/wangandi520/andyspythonscript)
 
 ## 各种class用法

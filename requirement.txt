@@ -1,0 +1,6 @@
+pyqt5
+pypinyin
+opencc-python-reimplemented
+pyinstaller
+pandas
+openpyxl
