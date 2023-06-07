@@ -86,7 +86,7 @@ class MyQWidget(QWidget):
     def toMarkdownSlot(self):
         # 转换成markdown格式
         returnFileInfo = ['|文件夹名|文件类型|文件大小|修改时间|是否加密|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码|\n',
-                          '| --- | --- | --- | --- | --- | --- | --- | --- |\n']
+                          '| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n']
 
         for eachInfo in self.allFileInfoArray:
             newContent = '|'

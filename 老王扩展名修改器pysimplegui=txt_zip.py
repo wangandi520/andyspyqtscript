@@ -23,7 +23,7 @@ def mainGui():
             [sg.Text('确定好扩展名，拖拽文件或文件夹（所有文件）就会生效',font=("宋体", 10)),sg.Button('捐赠')]
             ]    
   
-    window = sg.Window('老王扩展名修改器v1.1', layout,font=("宋体", 15),default_element_size=(50,1))  
+    window = sg.Window('老王扩展名修改器v1.1', layout,font=("宋体", 15),default_element_size=(50,1),grab_anywhere=True)  
     
     while True:
         event, values = window.read()
