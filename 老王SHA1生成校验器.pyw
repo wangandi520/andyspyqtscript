@@ -41,7 +41,7 @@ class MyQWidget(QWidget):
         self.toMarkdownButton = QPushButton('输出Markdown')
         self.toSha1Button = QPushButton('输出Sha1')
         self.donateButton = andysDonateButton('捐赠')
-        self.setMinimumSize(800, 400)
+        self.setMinimumSize(1400, 800)
         self.setAcceptDrops(True)
 
         rightLayout.setContentsMargins(9, 9, 9, 9)
