@@ -41,7 +41,7 @@ class MyQWidget(QWidget):
         self.toMarkdownButton = QPushButton('输出Markdown')
         self.toSha1Button = QPushButton('输出Sha1')
         self.donateButton = andysDonateButton('捐赠')
-        self.setMinimumSize(1400, 800)
+        self.setMinimumSize(1600, 800)
         self.setAcceptDrops(True)
 
         rightLayout.setContentsMargins(9, 9, 9, 9)
@@ -162,7 +162,7 @@ class MyQWidget(QWidget):
             self.sha1ProgressBar.setValue(0)
             self.fileInfoWidget.setColumnCount(9)
             self.fileInfoWidget.setHorizontalHeaderLabels(
-                ['文件名', '文件类型', '文件大小', '修改时间', '是否加密', '压缩包内文件数量', '压缩包内文件夹数量', '扩展名对应的文件数量', 'SHA1校验码'])
+                ['文件名', 'SHA1校验码', '文件类型', '文件大小', '修改时间', '是否加密', '压缩包内文件数量', '压缩包内文件夹数量', '扩展名对应的文件数量'])
             progressStep = int(100 / (len(self.fileListWidget.getAllFileListArray()) - self.fileInfoWidget.rowCount()))
             for i in range(self.fileInfoWidget.rowCount(), len(self.fileListWidget.getAllFileListArray())):
                 self.fileInfoWidget.insertRow(self.fileInfoWidget.rowCount())
@@ -209,18 +209,19 @@ class MyQWidget(QWidget):
                 tmpSha1 = self.getSha1(eachFilePath)
 
                 self.fileInfoWidget.setItem(i, 0, QTableWidgetItem(eachFilePath.name))
-                self.fileInfoWidget.setItem(i, 1, QTableWidgetItem(eachFilePath.suffix[1:]))
-                self.fileInfoWidget.setItem(i, 2, QTableWidgetItem((self.formatFileSize(eachFilePath.stat().st_size))))
-                self.fileInfoWidget.setItem(i, 3, QTableWidgetItem(
+                self.fileInfoWidget.setItem(i, 1, QTableWidgetItem(tmpSha1))
+                self.fileInfoWidget.setItem(i, 2, QTableWidgetItem(eachFilePath.suffix[1:]))
+                self.fileInfoWidget.setItem(i, 3, QTableWidgetItem((self.formatFileSize(eachFilePath.stat().st_size))))
+                self.fileInfoWidget.setItem(i, 4, QTableWidgetItem(
                     datetime.datetime.fromtimestamp(eachFilePath.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S')))
                 if isEncrypted:
-                    self.fileInfoWidget.setItem(i, 4, QTableWidgetItem('是'))
+                    self.fileInfoWidget.setItem(i, 5, QTableWidgetItem('是'))
                 else:
-                    self.fileInfoWidget.setItem(i, 4, QTableWidgetItem('否'))
-                self.fileInfoWidget.setItem(i, 5, QTableWidgetItem(str(fileCount)))
-                self.fileInfoWidget.setItem(i, 6, QTableWidgetItem(str(dirCount)))
-                self.fileInfoWidget.setItem(i, 7, QTableWidgetItem(tempFileType[:-2]))
-                self.fileInfoWidget.setItem(i, 8, QTableWidgetItem(tmpSha1))
+                    self.fileInfoWidget.setItem(i, 5, QTableWidgetItem('否'))
+                self.fileInfoWidget.setItem(i, 6, QTableWidgetItem(str(fileCount)))
+                self.fileInfoWidget.setItem(i, 7, QTableWidgetItem(str(dirCount)))
+                self.fileInfoWidget.setItem(i, 8, QTableWidgetItem(tempFileType[:-2]))
+                self.fileInfoWidget.setItem(i, 9, QTableWidgetItem(tmpSha1))
 
                 eachFileInfoArray = []
                 if self.fileListWidget.getIfFirstDrop():
