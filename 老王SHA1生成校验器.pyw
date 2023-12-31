@@ -73,7 +73,7 @@ class MyQWidget(QWidget):
     def toHtmlSlot(self):
         # 转换成html格式
         returnFileInfo = [
-            '<html><head><title>文件信息</title><style>table{width:auto;}table,td{border:1px solid #000000;table-layout:fixed;border-collapse:collapse;}table td:first-child{width:auto;}table td{min-width:100px;}a{text-decoration: none;}table tr:first-child{background-color:#eee;}tr:hover{background-color:#eee;}</style></head><body><table id="allFileTable"><tr><td>文件夹名</td><td>文件类型</td><td>文件大小</td><td>修改时间</td><td>是否加密</td><td>压缩包内文件数量</td><td>压缩包内文件夹数量</td><td>扩展名对应的文件数量</td><td>SHA1校验码</td></tr>']
+            '<html><head><title>文件信息</title><style>table{width:auto;}table,td{border:1px solid #000000;table-layout:fixed;border-collapse:collapse;}table td:first-child{width:auto;}table td{min-width:100px;}a{text-decoration: none;}table tr:first-child{background-color:#eee;}tr:hover{background-color:#eee;}</style></head><body><table id="allFileTable"><tr><td>文件夹名</td><td>SHA1校验码</td><td>文件类型</td><td>文件大小</td><td>修改时间</td><td>是否加密</td><td>压缩包内文件数量</td><td>压缩包内文件夹数量</td><td>扩展名对应的文件数量</td></tr>']
 
         for eachInfo in self.allFileInfoArray:
             newContent = '<tr>'
@@ -85,7 +85,7 @@ class MyQWidget(QWidget):
 
     def toMarkdownSlot(self):
         # 转换成markdown格式
-        returnFileInfo = ['|文件夹名|文件类型|文件大小|修改时间|是否加密|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|SHA1校验码|\n',
+        returnFileInfo = ['|文件夹名|SHA1校验码|文件类型|文件大小|修改时间|是否加密|压缩包内文件数量|压缩包内文件夹数量|扩展名对应的文件数量|\n',
                           '| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n']
 
         for eachInfo in self.allFileInfoArray:
@@ -98,7 +98,7 @@ class MyQWidget(QWidget):
     def toSha1Slot(self):
         returnFileInfo = []
         for eachInfo in self.allFileInfoArray:
-            returnFileInfo.append(eachInfo[8] + ' *' + eachInfo[0] + '\n')
+            returnFileInfo.append(eachInfo[1] + ' *' + eachInfo[0] + '\n')
         self.writeFile('sha', returnFileInfo)
 
     def fileListChangedSlot(self):
@@ -228,6 +228,7 @@ class MyQWidget(QWidget):
                     eachFileInfoArray.append(str(eachFilePath.relative_to(self.fileListWidget.getFirstDropDir())))
                 else:
                     eachFileInfoArray.append(str(eachFilePath))
+                eachFileInfoArray.append(tmpSha1)
                 eachFileInfoArray.append(eachFilePath.suffix[1:])
                 eachFileInfoArray.append((self.formatFileSize(eachFilePath.stat().st_size)))
                 eachFileInfoArray.append(
@@ -239,7 +240,6 @@ class MyQWidget(QWidget):
                 eachFileInfoArray.append(str(fileCount))
                 eachFileInfoArray.append(str(dirCount))
                 eachFileInfoArray.append(tempFileType[:-2])
-                eachFileInfoArray.append(tmpSha1)
                 self.allFileInfoArray.append(eachFileInfoArray)
                 self.sha1ProgressBar.setValue(self.sha1ProgressBar.value() + progressStep)
             self.sha1ProgressBar.setValue(100)
@@ -285,7 +285,7 @@ class MyQWidget(QWidget):
 
     def writeFile(self, suffix, filereadlines):
         if self.fileListWidget.getIfFirstDrop():
-            newfile = open(str(self.fileListWidget.getAllFileListArray()[0].parent.joinpath(
+            newfile = open(str(self.fileListWidget.getAllFileListArray()[0].parent.parent.joinpath(
                 self.fileListWidget.getAllFileListArray()[0].parent.name)) + ' ' + time.strftime("%Y%m%d", time.localtime()) + '.' + suffix, mode='w', encoding='UTF-8')
         else:
             newfile = open(str(Path.cwd()) + '\\' + Path.cwd().name + ' ' + time.strftime("%Y%m%d", time.localtime()) + '.' + suffix, mode='w', encoding='UTF-8')
