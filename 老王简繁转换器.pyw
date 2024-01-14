@@ -38,7 +38,7 @@ class MyQWidget(QWidget):
         self.outputSLineEdit = QLineEdit()
         self.outputLetterLineEdit = QLineEdit()
         self.outputFirstLetterLineEdit = QLineEdit()
-        self.setMinimumSize(600, 200)
+        self.setMinimumSize(1000, 300)
         
         self.oldAllFilePathList = []
         self.setAcceptDrops(True)

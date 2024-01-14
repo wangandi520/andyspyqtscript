@@ -4,3 +4,5 @@ opencc-python-reimplemented
 pyinstaller
 pandas
 openpyxl
+pillow
+rarfile
