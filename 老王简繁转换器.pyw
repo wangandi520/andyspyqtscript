@@ -1,5 +1,6 @@
 # encoding:utf-8
 # https://github.com/wangandi520
+# v1.0
 
 import sys
 from opencc import OpenCC
