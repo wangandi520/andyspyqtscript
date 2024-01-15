@@ -30,7 +30,7 @@ class MyQWidget(QWidget):
         self.oldNameButton = QPushButton('原名')
         self.outputTButton = QPushButton('繁体')
         self.outputSButton = QPushButton('简体')
-        self.outputLetterButton = QPushButton('字母')
+        self.outputLetterButton = QPushButton('拼音')
         self.outputFirstLetterButton = QPushButton('首字母')
         
         self.inputLineEdit = QLineEdit()
