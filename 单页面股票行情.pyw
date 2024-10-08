@@ -43,7 +43,7 @@ class MyQWidget(QWidget):
         middleLayout = QVBoxLayout()
         bottomLayout = QVBoxLayout()
         mainLayout = QVBoxLayout()
-        self.setMinimumSize(430, 580)
+        self.setMinimumSize(430, 500)
         mainLayout.setContentsMargins(10, 10, 10, 10)
 
         # 设置行数   
