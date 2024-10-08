@@ -30,7 +30,7 @@ class MyQWidget(QWidget):
         
         self.statusBar = QStatusBar()
         self.searchStatus = QLabel('准备就绪')
-        self.currentTime = QLabel()
+        self.currentTime = QLabel(QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm:ss ddd"))
         
         self.statusBar.addWidget(self.searchStatus, 100)
         self.statusBar.addWidget(self.currentTime,100)
@@ -65,6 +65,7 @@ class MyQWidget(QWidget):
         mainLayout.addLayout(middleLayout)
         mainLayout.addLayout(bottomLayout)
         self.setLayout(mainLayout)
+        
     def showNowTime(self):
         # 右下角显示时间
         self.currentTime.setText(QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm:ss ddd"))  
