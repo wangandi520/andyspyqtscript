@@ -8,9 +8,9 @@ import time
 import requests
 
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem, QHeaderView, QLineEdit
+    QTableWidgetItem, QHeaderView, QLineEdit, QStatusBar
 from PyQt5.QtGui import QBrush, QColor
-from PyQt5.QtCore import QSize, QUrl, Qt
+from PyQt5.QtCore import QSize, QUrl, Qt, QTimer, QDateTime
 from classandysAboutButton import andysDonateButton
 
 # pip install pyqt5 pyqt5-tools requests pillow
@@ -23,15 +23,27 @@ class MyQWidget(QWidget):
         self.inputSearchValueLineEdit = QLineEdit()
         self.inputSearchValueLineEdit.setText('sh600036')
         self.inputSearchValueLineEdit.returnPressed.connect(self.setStockData)
-        self.searchButton = QPushButton('搜索')
+        self.searchButton = QPushButton('查询')
         self.searchButton.setShortcut(Qt.Key_F5)
         self.searchButton.clicked.connect(self.setStockData)
         self.donateButton = andysDonateButton('捐赠')
+        
+        self.statusBar = QStatusBar()
+        self.searchStatus = QLabel('准备就绪')
+        self.currentTime = QLabel()
+        
+        self.statusBar.addWidget(self.searchStatus, 100)
+        self.statusBar.addWidget(self.currentTime,100)
+        currentClockTimer = QTimer(self)
+        currentClockTimer.start(1000)
+        currentClockTimer.timeout.connect(self.showNowTime)
+        
 
         topLayout = QHBoxLayout()
+        middleLayout = QVBoxLayout()
         bottomLayout = QVBoxLayout()
         mainLayout = QVBoxLayout()
-        self.setMinimumSize(430, 480)
+        self.setMinimumSize(430, 580)
         mainLayout.setContentsMargins(10, 10, 10, 10)
 
         # 设置行数   
@@ -47,11 +59,16 @@ class MyQWidget(QWidget):
         topLayout.addWidget(self.inputSearchValueLineEdit)
         topLayout.addWidget(self.searchButton)
         topLayout.addWidget(self.donateButton)
-        bottomLayout.addWidget(self.stockDataWidget)
+        middleLayout.addWidget(self.stockDataWidget)
+        bottomLayout.addWidget(self.statusBar)
         mainLayout.addLayout(topLayout)
+        mainLayout.addLayout(middleLayout)
         mainLayout.addLayout(bottomLayout)
         self.setLayout(mainLayout)
-         
+    def showNowTime(self):
+        # 右下角显示时间
+        self.currentTime.setText(QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm:ss ddd"))  
+        
     def initStockData(self):
         # 初始化股票表格数据
         # stockDataWidget股票信息基本样式
@@ -247,6 +264,7 @@ class MyQWidget(QWidget):
             return 'green'
         
     def setStockData(self):
+        self.searchStatus.setText('查询中')
         myStockData = self.getStockData()
         if myStockData:
             self.stockDataWidget.setItem(0, 0, QTableWidgetItem(myStockData[0]))
@@ -324,6 +342,10 @@ class MyQWidget(QWidget):
             self.stockDataWidget.setItem(12, 3, tempWidgetItem)
             self.stockDataWidget.setItem(13, 0, QTableWidgetItem(myStockData[29]))
             self.stockDataWidget.setItem(13, 1, QTableWidgetItem(myStockData[30]))
+            self.searchStatus.setText('查询成功')
+        else:
+            self.searchStatus.setText('查询失败')
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
