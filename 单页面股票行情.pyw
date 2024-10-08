@@ -13,7 +13,7 @@ from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtCore import QSize, QUrl, Qt
 from classandysAboutButton import andysDonateButton
 
-# pip install pyqt5 pyqt5-tools requests
+# pip install pyqt5 pyqt5-tools requests pillow
 
 class MyQWidget(QWidget):
     def __init__(self, parent=None):
