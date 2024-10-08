@@ -10,7 +10,7 @@ import requests
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, \
     QTableWidgetItem, QHeaderView, QLineEdit
 from PyQt5.QtGui import QBrush, QColor
-from PyQt5.QtCore import QSize, QUrl
+from PyQt5.QtCore import QSize, QUrl, Qt
 from classandysAboutButton import andysDonateButton
 
 # pip install pyqt5 pyqt5-tools rarfile pillow requests
@@ -22,14 +22,15 @@ class MyQWidget(QWidget):
         self.stockDataWidget = QTableWidget()
         self.inputSearchValueLineEdit = QLineEdit()
         self.inputSearchValueLineEdit.setText('sh600036')
+        self.inputSearchValueLineEdit.returnPressed.connect(self.setStockData)
         self.searchButton = QPushButton('搜索')
+        self.searchButton.setShortcut(Qt.Key_F5)
+        self.searchButton.clicked.connect(self.setStockData)
         self.donateButton = andysDonateButton('捐赠')
 
         topLayout = QHBoxLayout()
         bottomLayout = QVBoxLayout()
         mainLayout = QVBoxLayout()
-
-        self.searchButton.clicked.connect(self.setStockData)
         self.setMinimumSize(430, 480)
         mainLayout.setContentsMargins(10, 10, 10, 10)
 
