@@ -265,9 +265,9 @@ class MyQWidget(QWidget):
             return 'green'
         
     def setStockData(self):
-        self.searchStatus.setText('查询中')
         myStockData = self.getStockData()
         if myStockData:
+            self.searchStatus.setText(myStockData[0] + ' 查询中')
             self.stockDataWidget.setItem(0, 0, QTableWidgetItem(myStockData[0]))
             self.stockDataWidget.setItem(0, 1, QTableWidgetItem(myStockData[1]))
             
@@ -343,7 +343,7 @@ class MyQWidget(QWidget):
             self.stockDataWidget.setItem(12, 3, tempWidgetItem)
             self.stockDataWidget.setItem(13, 0, QTableWidgetItem(myStockData[29]))
             self.stockDataWidget.setItem(13, 1, QTableWidgetItem(myStockData[30]))
-            self.searchStatus.setText('查询成功')
+            self.searchStatus.setText(myStockData[0] + ' 查询成功')
         else:
             self.searchStatus.setText('查询失败')
         
