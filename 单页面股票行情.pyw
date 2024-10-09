@@ -199,7 +199,7 @@ class MyQWidget(QWidget):
         # headers={'Referer':''}
         # 获取股票编号
         getstockCode = self.inputSearchValueLineEdit.text()
-        if getstockCode != '' and getstockCode[0:2] in ['bj', 'sh', 'sz']:
+        if getstockCode != '' and getstockCode[0:2] in ['bj', 'sh', 'sz'] and len(getstockCode) > 4:
             myStockCode = getstockCode[0:8]
         else:
             return
