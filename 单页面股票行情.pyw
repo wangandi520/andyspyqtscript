@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLa
     QTableWidgetItem, QHeaderView, QLineEdit, QStatusBar, QComboBox, QCompleter, QHeaderView
 from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtCore import QSize, QUrl, Qt, QTimer, QDateTime, QSortFilterProxyModel
-from classandysAboutButton import andysDonateButton
 
 # pip install pyqt5 pyqt5-tools requests pillow
 
@@ -27,7 +26,6 @@ class MyQWidget(QWidget):
         self.searchButton = QPushButton('查询')
         self.searchButton.setShortcut(Qt.Key_F5)
         self.searchButton.clicked.connect(self.setStockData)
-        self.donateButton = andysDonateButton('捐赠')
         
         # 搜索框自动补全
         # 读取文件
@@ -71,7 +69,6 @@ class MyQWidget(QWidget):
         # Layout设置
         topLayout.addWidget(self.inputSearchValueLineEdit)
         topLayout.addWidget(self.searchButton)
-        topLayout.addWidget(self.donateButton)
         middleLayout.addWidget(self.stockDataWidget)
         bottomLayout.addWidget(self.statusBar)
         mainLayout.addLayout(topLayout)
