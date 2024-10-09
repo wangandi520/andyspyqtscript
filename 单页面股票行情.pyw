@@ -110,10 +110,10 @@ class MyQWidget(QWidget):
         # 今开 今日开盘价 昨收 昨日收盘价
         # 最高 今日最高价 最低 今日最低价
         # 日期 时间
+        self.stockDataWidget.setSpan(0, 0, 1, 2)
+        self.stockDataWidget.setSpan(0, 2, 1, 2)
         self.stockDataWidget.setItem(0, 0, QTableWidgetItem('股票名'))
-        self.stockDataWidget.setItem(0, 1, QTableWidgetItem('股票编号'))
-        self.stockDataWidget.setItem(0, 2, QTableWidgetItem('当前价格'))
-        self.stockDataWidget.setItem(0, 3, QTableWidgetItem('涨跌'))
+        self.stockDataWidget.setItem(0, 2, QTableWidgetItem('价格涨跌'))
         self.stockDataWidget.setItem(1, 0, QTableWidgetItem('卖五'))
         self.stockDataWidget.setItem(1, 1, QTableWidgetItem('0'))
         self.stockDataWidget.setItem(1, 2, QTableWidgetItem(''))
@@ -295,16 +295,15 @@ class MyQWidget(QWidget):
         myStockData = self.getStockData()
         if myStockData:
             self.searchStatus.setText(myStockData[0] + ' 查询中')
-            self.stockDataWidget.setItem(0, 0, QTableWidgetItem(myStockData[0]))
-            self.stockDataWidget.setItem(0, 1, QTableWidgetItem(myStockData[1]))
+            self.stockDataWidget.setItem(0, 0, QTableWidgetItem(myStockData[0] + ' ' + myStockData[1]))
             
             tempWidgetItem = QTableWidgetItem(myStockData[2])
             tempWidgetItem.setForeground(QBrush(QColor(self.getRedOrGreen(myStockData[2], myStockData[26]))))
             self.stockDataWidget.setItem(0, 2, tempWidgetItem)
             
-            tempWidgetItem = QTableWidgetItem(myStockData[3] + ' ' + myStockData[4] + '%')
+            tempWidgetItem = QTableWidgetItem(myStockData[2] + ' ' + myStockData[3] + ' ' + myStockData[4] + '%')
             tempWidgetItem.setForeground(QBrush(QColor(self.getRedOrGreen(myStockData[2], myStockData[26]))))
-            self.stockDataWidget.setItem(0, 3, tempWidgetItem)
+            self.stockDataWidget.setItem(0, 2, tempWidgetItem)
             
             tempWidgetItem = QTableWidgetItem(myStockData[5])
             tempWidgetItem.setForeground(QBrush(QColor(self.getRedOrGreen(myStockData[5], myStockData[26]))))
