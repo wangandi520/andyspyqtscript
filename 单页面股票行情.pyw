@@ -22,7 +22,7 @@ class MyQWidget(QWidget):
         self.stockDataWidget.resizeRowsToContents()
         self.stockDataWidget.resizeColumnsToContents()
         self.inputSearchValueLineEdit = QLineEdit()
-        self.inputSearchValueLineEdit.returnPressed.connect(self.setStockData)
+        self.inputSearchValueLineEdit.mousePressEvent = lambda _ : self.inputSearchValueLineEdit.selectAll()
         self.searchButton = QPushButton('查询')
         self.searchButton.setShortcut(Qt.Key_F5)
         self.searchButton.clicked.connect(self.setStockData)
@@ -48,6 +48,7 @@ class MyQWidget(QWidget):
         currentClockTimer.timeout.connect(self.showNowTime)
         
         #信号
+        self.inputSearchValueLineEdit.returnPressed.connect(self.setStockData)
         self.inputSearchValueLineEdit.textChanged.connect(self.doSearchSlot)
         
         topLayout = QHBoxLayout()
