@@ -35,7 +35,7 @@ class MyQWidget(QWidget):
         self.completer = QCompleter(self.stockCodeList)
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.completer.setFilterMode(Qt.MatchContains)
-        self.completer.setCompletionMode(QCompleter.UnfilteredPopupCompletion) 
+        # self.completer.setCompletionMode(QCompleter.UnfilteredPopupCompletion) 
         self.inputSearchValueLineEdit.setCompleter(self.completer)
         
         self.statusBar = QStatusBar()
