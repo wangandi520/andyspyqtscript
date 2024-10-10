@@ -8,9 +8,9 @@ import time
 import requests
 
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, \
-    QTableWidgetItem, QHeaderView, QLineEdit, QStatusBar, QComboBox, QCompleter, QHeaderView
+    QTableWidgetItem, QHeaderView, QLineEdit, QStatusBar, QCompleter
 from PyQt5.QtGui import QBrush, QColor
-from PyQt5.QtCore import QSize, QUrl, Qt, QTimer, QDateTime, QSortFilterProxyModel
+from PyQt5.QtCore import QSize, QUrl, Qt, QTimer, QDateTime
 
 # pip install pyqt5 pyqt5-tools requests pillow
 
