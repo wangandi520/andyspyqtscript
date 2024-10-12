@@ -9,7 +9,7 @@ import requests
 
 from PyQt6.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QTableWidget, \
      QTableWidgetItem, QHeaderView, QLineEdit, QStatusBar, QCompleter
-from PyQt6.QtGui import QBrush, QColor
+from PyQt6.QtGui import QBrush, QColor, QKeySequence
 from PyQt6.QtCore import QSize, QUrl, Qt, QTimer, QDateTime
 
 # pip install pyqt5 pyqt5-tools requests pillow
@@ -24,7 +24,8 @@ class MyQWidget(QWidget):
          self.inputSearchValueLineEdit = QLineEdit()
          self.inputSearchValueLineEdit.mousePressEvent = lambda _ : self.inputSearchValueLineEdit.selectAll()
          self.searchButton = QPushButton('查询')
-         # self.searchButton.setShortcut(Qt.Key_F5)
+         # F5刷新数据
+         self.searchButton.setShortcut(QKeySequence('F5'))
          self.searchButton.clicked.connect(self.setStockData)
          
          # 搜索框自动补全
