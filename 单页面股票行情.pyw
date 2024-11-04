@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLa
 from PyQt6.QtGui import QBrush, QColor, QKeySequence
 from PyQt6.QtCore import QSize, QUrl, Qt, QTimer, QDateTime
 
-# pip install pyqt5 pyqt5-tools requests pillow
+# pip install pyqt6 pyqt6-tools requests pillow
 
 class MyQWidget(QWidget):
      def __init__(self, parent=None):

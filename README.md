@@ -20,7 +20,7 @@ from 文件名 import class名，例如from classandysFileListWidget import andy
 
 ## 单页面股票行情
 
-需要pip install pyqt5 pyqt5-tools requests pillow
+需要pip install pyqt6 pyqt6-tools requests pillow
 
 建议看股票的，使用新浪的接口，目前搜索需要前缀例如sh600036，快捷键回车和f5
 
